@@ -48,49 +48,61 @@ POSAI is a multi-tenant SaaS platform for restaurants. It should help restaurant
 # Product Roadmap
 
 ## Sprint 1 - Foundation: Auth, Tenant & Restaurant Setup
+
 Owner signup, email verification, login, forgot/reset password, refresh token, logout, restaurant profile (name, GST, FSSAI, address, phone, email, logo), first branch (timezone, currency), owner dashboard shell, roles (OWNER, MANAGER, WAITER, CASHIER, CHEF, ADMIN), tenant-scoped repository base, logging, error handling, CI pipeline.
 **Deliverable:** Owner creates an account, a restaurant and a branch, then lands on the dashboard. Tenancy is already enforced in the data layer.
 
 ## Sprint 2 - Menu Management
+
 Categories, menu items, variants, prices, GST, availability, images (S3), bulk Excel import.
 **Deliverable:** Restaurant can build its complete menu.
 
 ## Sprint 3 - Table Management
+
 Floors, tables, capacity, status (available/occupied/reserved), merge, split, reservations, live availability.
 **Deliverable:** Interactive live floor plan.
 
 ## Sprint 4 - Orders, KOT & Kitchen
+
 Dine-in, takeaway, KOT, Socket.IO real-time updates, order status flow (placed -> preparing -> ready -> served), kitchen dashboard, offline-tolerant order taking.
 **Deliverable:** Orders reach the kitchen instantly and status updates are real time.
 
 ## Sprint 5 - Billing & GST
+
 Discounts, CGST/SGST, service charge, tips, round-off, invoice numbering, invoice generation, thermal print support.
 **Deliverable:** GST-compliant invoices.
 
 ## Sprint 6 - Payments
+
 Cash, UPI, card, split payment, refunds, payment history, day-end cash reconciliation.
 **Deliverable:** Complete payment lifecycle.
 
 ### >>> PILOT GATE (after Sprint 6) <<<
+
 Deploy to one real restaurant and run it for real service. Collect feedback and fix issues before building further. Sprints 7+ are planned against what the pilot teaches us.
 
 ## Sprint 7 - Dashboard & Reports
+
 Daily/weekly/monthly sales, top-selling items, staff performance, GST/tax reports, profit reports.
 **Deliverable:** Business analytics dashboard.
 
 ## Sprint 8 - Inventory
+
 Stock items, recipes/consumption per menu item, purchase entries, low-stock alerts, wastage.
 **Deliverable:** Stock tracked automatically from sales.
 
 ## Sprint 9 - Customers & Offers
+
 Customer records, order history, loyalty basics, coupons, offers/discount rules.
 **Deliverable:** Repeat-customer and promotion tooling.
 
 ## Sprint 10 - AI Features
+
 Sales forecasting, demand forecasting, inventory prediction, AI restaurant assistant, smart menu recommendations, AI insights, voice billing (future). Built on the real data collected in earlier sprints.
 **Deliverable:** AI-powered restaurant insights.
 
 ## Sprint 11 - SaaS Platform
+
 Subscription plans, platform billing, super admin panel, multiple restaurants and branches per owner, custom domains, feature flags, tenant onboarding, usage limits, tenant-isolation audit.
 **Deliverable:** A SaaS platform that can serve thousands of restaurants.
 

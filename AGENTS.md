@@ -14,7 +14,7 @@ Project spec: `docs/master-prompt.md`. This repo is the FRONTEND only. The backe
 ## General Rules
 
 - Use TypeScript only (strict). No `any` without a comment explaining why.
-- Use ES Modules. Use pnpm as the package manager.
+- Use ES Modules. Use npm as the package manager.
 - Keep code simple, readable, and production-ready.
 - Avoid unnecessary abstractions, extra folders, and over-engineering.
 - Prefer consistency over cleverness.
@@ -72,6 +72,7 @@ src/
 ```
 
 Module rules:
+
 - Pages in `app/` stay thin: layout plus module components. No business logic or API calls in pages.
 - Outside a module, import only from that module's `index.ts`, never from its internal files.
 - A module never imports another module's internals. If two modules need the same thing, move it to `shared/`.
