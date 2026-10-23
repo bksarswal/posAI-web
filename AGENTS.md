@@ -27,7 +27,7 @@ Next.js (App Router), TypeScript, Tailwind CSS, shadcn/ui, Ant Design (forms onl
 ## Dependencies
 
 - Ask before adding any new dependency.
-- Pre-approved for project setup only: eslint, prettier, husky, lint-staged, axios, antd, @ant-design/nextjs-registry, @tanstack/react-query, zod, openapi-typescript, clsx, tailwind-merge, lucide-react, and what shadcn/ui needs.
+- Pre-approved for project setup only: eslint, prettier, husky, lint-staged, vitest, axios, antd, @ant-design/nextjs-registry, @tanstack/react-query, zod, openapi-typescript, clsx, tailwind-merge, lucide-react, and what shadcn/ui needs.
 
 ---
 
@@ -152,4 +152,4 @@ Screen works against the real API, loading/empty/error states handled, lint and 
 
 ## Lessons Learned (add agent mistakes here)
 
-- (empty)
+- Always open the project from the exact-case folder path (posAI-web). A wrong-case path on Windows loads React twice and breaks `next build` with "Cannot read properties of null (reading 'useContext')".

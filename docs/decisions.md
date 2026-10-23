@@ -48,3 +48,43 @@ This document records architectural, technical, and operational decisions agreed
   - The generated file `src/shared/types/api.d.ts` must never be edited by hand and is excluded from ESLint and Prettier. Whenever the backend API contract changes, run `npm run api:types`.
   - CI must never run `api:types` because the backend repo is not available in frontend CI workflows; the committed `api.d.ts` is the source of truth.
   - [`src/shared/lib/health.ts`](../src/shared/lib/health.ts) is only a temporary type-level proof and must be deleted once a real module API file uses the generated types.
+
+---
+
+## 7. TypeScript 5.x Strict Mode
+
+- **Decision**: Use TypeScript 5.9.x (`^5.9.3`) in strict mode with bundler module resolution.
+- **Context**: Guarantees type safety across both frontend application components and shared infrastructure.
+
+---
+
+## 8. Literal Environment Variable Inlining
+
+- **Decision**: Read client environment variables through explicit literal member access (e.g. `process.env.NEXT_PUBLIC_API_URL`) in [`src/shared/lib/env.ts`](../src/shared/lib/env.ts) rather than passing the whole `process.env` object into parsers.
+- **Context**: Next.js compiler replaces literal `process.env.NEXT_PUBLIC_*` identifiers with their compile-time values in browser bundles. Passing `process.env` dynamically prevents static inlining in client-side code.
+
+---
+
+## 9. Money Rules & Decimal Handling
+
+- **Decision**: The API communicates currency strictly in integer paise. Convert to rupees only at display time using [`formatPaise`](../src/shared/lib/money.ts).
+- **Decimal Safety in `rupeesToPaise`**:
+  - `rupeesToPaise rejects more than 2 decimals; never truncates silently.`
+  - Inputs with more than two decimal places (such as `1.005` or `1.999`) throw `TypeError`.
+  - Exponent notation (e.g. `1e-7`, `1e21`) is rejected with `TypeError`.
+  - Values whose paise result exceeds `Number.isSafeInteger` are rejected with `TypeError`.
+  - Whitespace in string rupee inputs is trimmed before parsing.
+
+---
+
+## 10. Co-located Tests Next to Code
+
+- **Decision**: Frontend unit tests are co-located next to code (`src/**/*.test.ts`), whereas the backend repository organizes tests in a root `tests/` directory.
+- **Context**: Keeps unit tests directly next to modular utilities (`money.test.ts`, `zodAntdRule.test.ts`, `env.test.ts`) for developer ergonomics. Test suites do not require a `.env` file on disk.
+
+---
+
+## 11. Windows Exact-Case Folder Path
+
+- **Decision**: Always open and run the repository from the exact-case folder path (`posAI-web`).
+- **Context**: On Windows, accessing the directory with different casing (e.g. `posai-web` vs `posAI-web`) causes Node module resolution to evaluate `react` and other shared libraries twice in different paths. This breaks React 19 dispatcher contexts during `next build` prerendering with `"Cannot read properties of null (reading 'useContext')"`.
