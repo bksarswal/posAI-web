@@ -114,7 +114,7 @@ Module rules:
 
 ## Auth
 
-- Tokens in httpOnly cookies where possible. Refresh and logout handled in the Axios interceptor and one auth utility. Redirect unauthenticated users in the middleware file.
+- Tokens in httpOnly cookies where possible (refresh cookie scoped to /api/v1/auth; access token in memory). Refresh and logout handled in the Axios interceptor and one auth utility. Route protection and auth redirects are handled client-side in route guards.
 - Role-aware UI: hide what a role cannot use, but never rely on the UI for security, the backend enforces it.
 
 ---
@@ -133,10 +133,18 @@ Module rules:
 - Early return. Meaningful names. No duplicate code.
 - Comments only to explain WHY.
 
-## Testing and Git
+## Testing
 
 - Test utilities (especially money), schemas, and important forms.
-- Conventional commits, small commits, one branch per feature (`feat/sprintN-name`, same name as the backend branch).
+
+## Git
+
+- After I approve a task, commit it locally: one task = one commit, Conventional Commits message (feat/fix/chore/docs/test(scope): summary), on the current feature branch (feat/sprintN-name). Never commit to main.
+- Before committing, run `git status --short` and show it to me. Stage files by name or directory, never blindly with `git add -A`. Never stage .env or any secret, build output, coverage, or temp files.
+- Never use --no-verify, --force or --force-with-lease, and never rewrite history that is already pushed.
+- If a Husky or lint-staged check fails, fix the cause; do not bypass it.
+- Never run `git push` yourself. After committing, tell me the exact push command and wait.
+- Do not create or delete branches or tags unless I ask.
 
 ---
 
