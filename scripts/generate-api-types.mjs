@@ -2,7 +2,7 @@ import { execSync } from 'node:child_process';
 import path from 'node:path';
 import fs from 'node:fs';
 
-const source = process.env.OPENAPI_SOURCE || '../posai-api/openapi.json';
+const source = process.env.OPENAPI_SOURCE || '../posAI-api/openapi.json';
 const outputDir = path.resolve(process.cwd(), 'src/shared/types');
 const outputFile = path.join(outputDir, 'api.d.ts');
 

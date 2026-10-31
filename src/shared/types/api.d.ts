@@ -74,6 +74,2011 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/restaurant": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get tenant restaurant
+         * @description Retrieves the restaurant profile for the active tenant. Accessible by any authenticated role. Returns 404 when none exists.
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Restaurant retrieved successfully */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessResponse"] & {
+                            data: {
+                                restaurant: {
+                                    id: string;
+                                    tenantId: string;
+                                    name: string;
+                                    gstin?: string;
+                                    fssai?: string;
+                                    phone: string;
+                                    email: string;
+                                    address: {
+                                        line1: string;
+                                        line2?: string;
+                                        city: string;
+                                        state: string;
+                                        pincode: string;
+                                    };
+                                    logoUrl?: string;
+                                    createdAt: string;
+                                    updatedAt: string;
+                                };
+                            };
+                        };
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Restaurant not found for this tenant */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /**
+         * Create tenant restaurant
+         * @description Creates the single restaurant profile for the tenant. OWNER only. Returns 409 if a restaurant already exists.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            /** @description Restaurant creation payload */
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        name: string;
+                        gstin?: string;
+                        fssai?: string;
+                        phone: string;
+                        /** Format: email */
+                        email: string;
+                        address: {
+                            line1: string;
+                            line2?: string;
+                            city: string;
+                            state: string;
+                            pincode: string;
+                        };
+                        /** Format: uri */
+                        logoUrl?: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description Restaurant created successfully */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessResponse"] & {
+                            data: {
+                                restaurant: {
+                                    id: string;
+                                    tenantId: string;
+                                    name: string;
+                                    gstin?: string;
+                                    fssai?: string;
+                                    phone: string;
+                                    email: string;
+                                    address: {
+                                        line1: string;
+                                        line2?: string;
+                                        city: string;
+                                        state: string;
+                                        pincode: string;
+                                    };
+                                    logoUrl?: string;
+                                    createdAt: string;
+                                    updatedAt: string;
+                                };
+                            };
+                        };
+                    };
+                };
+                /** @description Validation failed or unexpected fields */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Forbidden - OWNER role required */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Restaurant already exists for this tenant */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Update tenant restaurant
+         * @description Updates restaurant profile fields. OWNER and ADMIN roles only. Empty body returns 400.
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            /** @description Restaurant update payload (strict partial, non-empty) */
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        name?: string;
+                        gstin?: string;
+                        fssai?: string;
+                        phone?: string;
+                        /** Format: email */
+                        email?: string;
+                        address?: {
+                            line1: string;
+                            line2?: string;
+                            city: string;
+                            state: string;
+                            pincode: string;
+                        };
+                        /** Format: uri */
+                        logoUrl?: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description Restaurant updated successfully */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessResponse"] & {
+                            data: {
+                                restaurant: {
+                                    id: string;
+                                    tenantId: string;
+                                    name: string;
+                                    gstin?: string;
+                                    fssai?: string;
+                                    phone: string;
+                                    email: string;
+                                    address: {
+                                        line1: string;
+                                        line2?: string;
+                                        city: string;
+                                        state: string;
+                                        pincode: string;
+                                    };
+                                    logoUrl?: string;
+                                    createdAt: string;
+                                    updatedAt: string;
+                                };
+                            };
+                        };
+                    };
+                };
+                /** @description Validation failed or empty body */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Forbidden - OWNER or ADMIN role required */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Restaurant not found for this tenant */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+            };
+        };
+        trace?: never;
+    };
+    "/api/v1/branches": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List accessible branches
+         * @description Retrieves branches for the active tenant. OWNER and ADMIN see all branches; other roles see only assigned branches.
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Branches retrieved successfully */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessResponse"] & {
+                            data: {
+                                branches: {
+                                    id: string;
+                                    tenantId: string;
+                                    restaurantId: string;
+                                    name: string;
+                                    code: string;
+                                    address: {
+                                        line1: string;
+                                        line2?: string;
+                                        city: string;
+                                        state: string;
+                                        pincode: string;
+                                    };
+                                    phone?: string;
+                                    timezone: string;
+                                    currency: string;
+                                    isMain: boolean;
+                                    /** @enum {string} */
+                                    status: "ACTIVE" | "INACTIVE";
+                                    createdAt: string;
+                                    updatedAt: string;
+                                }[];
+                            };
+                        };
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /**
+         * Create a new branch
+         * @description Creates a new branch for the tenant. OWNER and ADMIN only. Requires an existing restaurant. First branch is automatically assigned isMain=true.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            /** @description Branch creation payload */
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        name: string;
+                        code: string;
+                        address: {
+                            line1: string;
+                            line2?: string;
+                            city: string;
+                            state: string;
+                            pincode: string;
+                        };
+                        phone?: string;
+                        /** @default Asia/Kolkata */
+                        timezone?: string;
+                        /**
+                         * @default INR
+                         * @enum {string}
+                         */
+                        currency?: "INR";
+                    };
+                };
+            };
+            responses: {
+                /** @description Branch created successfully */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessResponse"] & {
+                            data: {
+                                branch: {
+                                    id: string;
+                                    tenantId: string;
+                                    restaurantId: string;
+                                    name: string;
+                                    code: string;
+                                    address: {
+                                        line1: string;
+                                        line2?: string;
+                                        city: string;
+                                        state: string;
+                                        pincode: string;
+                                    };
+                                    phone?: string;
+                                    timezone: string;
+                                    currency: string;
+                                    isMain: boolean;
+                                    /** @enum {string} */
+                                    status: "ACTIVE" | "INACTIVE";
+                                    createdAt: string;
+                                    updatedAt: string;
+                                };
+                            };
+                        };
+                    };
+                };
+                /** @description Validation failed or forbidden fields (isMain, etc.) */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Forbidden - OWNER or ADMIN role required */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Restaurant required or duplicate branch code */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/branches/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get branch by ID
+         * @description Retrieves a branch by ID. Returns 404 if the branch does not exist, belongs to another tenant, or the user lacks access.
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description Branch MongoDB ObjectId */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Branch retrieved successfully */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessResponse"] & {
+                            data: {
+                                branch: {
+                                    id: string;
+                                    tenantId: string;
+                                    restaurantId: string;
+                                    name: string;
+                                    code: string;
+                                    address: {
+                                        line1: string;
+                                        line2?: string;
+                                        city: string;
+                                        state: string;
+                                        pincode: string;
+                                    };
+                                    phone?: string;
+                                    timezone: string;
+                                    currency: string;
+                                    isMain: boolean;
+                                    /** @enum {string} */
+                                    status: "ACTIVE" | "INACTIVE";
+                                    createdAt: string;
+                                    updatedAt: string;
+                                };
+                            };
+                        };
+                    };
+                };
+                /** @description Invalid ObjectId parameter (INVALID_ID) */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Branch not found (BRANCH_NOT_FOUND) */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Update branch by ID
+         * @description Updates editable branch fields. OWNER and ADMIN only. Cannot deactivate main branch (409 CANNOT_DEACTIVATE_MAIN_BRANCH).
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description Branch MongoDB ObjectId */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            /** @description Branch update payload (strict partial, non-empty) */
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        name?: string;
+                        address?: {
+                            line1: string;
+                            line2?: string;
+                            city: string;
+                            state: string;
+                            pincode: string;
+                        };
+                        phone?: string;
+                        timezone?: string;
+                        /** @enum {string} */
+                        status?: "ACTIVE" | "INACTIVE";
+                    };
+                };
+            };
+            responses: {
+                /** @description Branch updated successfully */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessResponse"] & {
+                            data: {
+                                branch: {
+                                    id: string;
+                                    tenantId: string;
+                                    restaurantId: string;
+                                    name: string;
+                                    code: string;
+                                    address: {
+                                        line1: string;
+                                        line2?: string;
+                                        city: string;
+                                        state: string;
+                                        pincode: string;
+                                    };
+                                    phone?: string;
+                                    timezone: string;
+                                    currency: string;
+                                    isMain: boolean;
+                                    /** @enum {string} */
+                                    status: "ACTIVE" | "INACTIVE";
+                                    createdAt: string;
+                                    updatedAt: string;
+                                };
+                            };
+                        };
+                    };
+                };
+                /** @description Validation failed, invalid ID, or unmodifiable fields */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Forbidden - OWNER or ADMIN role required */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Branch not found (BRANCH_NOT_FOUND) */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Cannot deactivate main branch (CANNOT_DEACTIVATE_MAIN_BRANCH) */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+            };
+        };
+        trace?: never;
+    };
+    "/api/v1/users/me": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get current user and onboarding context
+         * @description Retrieves user profile, tenant info, restaurant profile, and accessible branches. Exempt from mustChangePassword gate. Accessible by all authenticated roles.
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description User profile and onboarding context retrieved successfully */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessResponse"] & {
+                            data: {
+                                user: {
+                                    id: string;
+                                    tenantId: string;
+                                    name: string;
+                                    /** Format: email */
+                                    email: string;
+                                    /** @enum {string} */
+                                    role: "OWNER" | "ADMIN" | "MANAGER" | "WAITER" | "CASHIER" | "CHEF";
+                                    branchIds: string[];
+                                    emailVerified: boolean;
+                                    mustChangePassword: boolean;
+                                };
+                                tenant: {
+                                    id: string;
+                                    name: string;
+                                    slug: string;
+                                    status: string;
+                                };
+                                restaurant: {
+                                    id: string;
+                                    tenantId: string;
+                                    name: string;
+                                    gstin?: string;
+                                    fssai?: string;
+                                    phone: string;
+                                    email: string;
+                                    address: {
+                                        line1: string;
+                                        line2?: string;
+                                        city: string;
+                                        state: string;
+                                        pincode: string;
+                                    };
+                                    logoUrl?: string;
+                                    createdAt: string;
+                                    updatedAt: string;
+                                } | null;
+                                branches: {
+                                    id: string;
+                                    tenantId: string;
+                                    restaurantId: string;
+                                    name: string;
+                                    code: string;
+                                    address: {
+                                        line1: string;
+                                        line2?: string;
+                                        city: string;
+                                        state: string;
+                                        pincode: string;
+                                    };
+                                    phone?: string;
+                                    timezone: string;
+                                    currency: string;
+                                    isMain: boolean;
+                                    /** @enum {string} */
+                                    status: "ACTIVE" | "INACTIVE";
+                                    createdAt: string;
+                                    updatedAt: string;
+                                }[];
+                            };
+                        };
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Update own user profile
+         * @description Updates name or phone on own account. Blocked if mustChangePassword is true.
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            /** @description Self-update payload (strict name, phone) */
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        name?: string;
+                        phone?: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description Profile updated successfully */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessResponse"] & {
+                            data: {
+                                user: {
+                                    id: string;
+                                    tenantId: string;
+                                    name: string;
+                                    /** Format: email */
+                                    email: string;
+                                    phone?: string;
+                                    /** @enum {string} */
+                                    role: "OWNER" | "ADMIN" | "MANAGER" | "WAITER" | "CASHIER" | "CHEF";
+                                    branchIds: string[];
+                                    /** @enum {string} */
+                                    status: "ACTIVE" | "INACTIVE";
+                                    emailVerified: boolean;
+                                    mustChangePassword: boolean;
+                                    createdAt: string;
+                                    updatedAt: string;
+                                };
+                            };
+                        };
+                    };
+                };
+                /** @description Validation failed or uneditable fields provided */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Forbidden - Password change required */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+            };
+        };
+        trace?: never;
+    };
+    "/api/v1/users": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List staff users
+         * @description Lists staff users in the active tenant with pagination and filtering. OWNER or ADMIN only.
+         */
+        get: {
+            parameters: {
+                query?: {
+                    page?: number;
+                    limit?: number;
+                    role?: "OWNER" | "ADMIN" | "MANAGER" | "WAITER" | "CASHIER" | "CHEF";
+                    status?: "ACTIVE" | "INACTIVE";
+                    branchId?: string;
+                    q?: string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Staff users list retrieved successfully */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessResponse"] & {
+                            data: {
+                                items: {
+                                    id: string;
+                                    tenantId: string;
+                                    name: string;
+                                    /** Format: email */
+                                    email: string;
+                                    phone?: string;
+                                    /** @enum {string} */
+                                    role: "OWNER" | "ADMIN" | "MANAGER" | "WAITER" | "CASHIER" | "CHEF";
+                                    branchIds: string[];
+                                    /** @enum {string} */
+                                    status: "ACTIVE" | "INACTIVE";
+                                    emailVerified: boolean;
+                                    mustChangePassword: boolean;
+                                    createdAt: string;
+                                    updatedAt: string;
+                                }[];
+                                page: number;
+                                limit: number;
+                                total: number;
+                            };
+                            meta?: {
+                                page: number;
+                                limit: number;
+                                total: number;
+                                totalPages: number;
+                            };
+                        };
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Forbidden - Insufficient permissions */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /**
+         * Create staff user
+         * @description Creates a new staff user with temporary password. OWNER or ADMIN only. Returns 201 with Cache-Control: no-store.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            /** @description Staff creation payload */
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        name: string;
+                        /** Format: email */
+                        email: string;
+                        phone?: string;
+                        /** @enum {string} */
+                        role: "OWNER" | "ADMIN" | "MANAGER" | "WAITER" | "CASHIER" | "CHEF";
+                        /** @default [] */
+                        branchIds?: string[];
+                    };
+                };
+            };
+            responses: {
+                /** @description Staff user created successfully */
+                201: {
+                    headers: {
+                        /** @description Prevents credential caching */
+                        "Cache-Control"?: string;
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessResponse"] & {
+                            data: {
+                                user: {
+                                    id: string;
+                                    tenantId: string;
+                                    name: string;
+                                    /** Format: email */
+                                    email: string;
+                                    phone?: string;
+                                    /** @enum {string} */
+                                    role: "OWNER" | "ADMIN" | "MANAGER" | "WAITER" | "CASHIER" | "CHEF";
+                                    branchIds: string[];
+                                    /** @enum {string} */
+                                    status: "ACTIVE" | "INACTIVE";
+                                    emailVerified: boolean;
+                                    mustChangePassword: boolean;
+                                    createdAt: string;
+                                    updatedAt: string;
+                                };
+                                temporaryPassword: string;
+                            };
+                        };
+                    };
+                };
+                /** @description Validation failed or invalid branch assignment */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Forbidden - Insufficient permissions */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Email already registered */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/users/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get staff user by ID
+         * @description Retrieves a staff user by ID within the active tenant. OWNER or ADMIN only.
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description User MongoDB ObjectId */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Staff user retrieved successfully */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessResponse"] & {
+                            data: {
+                                user: {
+                                    id: string;
+                                    tenantId: string;
+                                    name: string;
+                                    /** Format: email */
+                                    email: string;
+                                    phone?: string;
+                                    /** @enum {string} */
+                                    role: "OWNER" | "ADMIN" | "MANAGER" | "WAITER" | "CASHIER" | "CHEF";
+                                    branchIds: string[];
+                                    /** @enum {string} */
+                                    status: "ACTIVE" | "INACTIVE";
+                                    emailVerified: boolean;
+                                    mustChangePassword: boolean;
+                                    createdAt: string;
+                                    updatedAt: string;
+                                };
+                            };
+                        };
+                    };
+                };
+                /** @description Invalid ObjectId parameter (INVALID_ID) */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Forbidden - Insufficient permissions */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description User not found (USER_NOT_FOUND) */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Update staff user by ID
+         * @description Updates staff user fields and role. OWNER or ADMIN only. Deactivating yourself returns 409.
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description User MongoDB ObjectId */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            /** @description Staff update payload (strict partial, non-empty) */
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        name?: string;
+                        phone?: string;
+                        /** @enum {string} */
+                        role?: "OWNER" | "ADMIN" | "MANAGER" | "WAITER" | "CASHIER" | "CHEF";
+                        branchIds?: string[];
+                        /** @enum {string} */
+                        status?: "ACTIVE" | "INACTIVE";
+                    };
+                };
+            };
+            responses: {
+                /** @description Staff user updated successfully */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessResponse"] & {
+                            data: {
+                                user: {
+                                    id: string;
+                                    tenantId: string;
+                                    name: string;
+                                    /** Format: email */
+                                    email: string;
+                                    phone?: string;
+                                    /** @enum {string} */
+                                    role: "OWNER" | "ADMIN" | "MANAGER" | "WAITER" | "CASHIER" | "CHEF";
+                                    branchIds: string[];
+                                    /** @enum {string} */
+                                    status: "ACTIVE" | "INACTIVE";
+                                    emailVerified: boolean;
+                                    mustChangePassword: boolean;
+                                    createdAt: string;
+                                    updatedAt: string;
+                                };
+                            };
+                        };
+                    };
+                };
+                /** @description Validation failed or invalid branch assignment */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Forbidden - Insufficient permissions */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description User not found (USER_NOT_FOUND) */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Cannot deactivate yourself (CANNOT_DEACTIVATE_SELF) */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+            };
+        };
+        trace?: never;
+    };
+    "/api/v1/users/{id}/reset-password": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Admin reset staff password
+         * @description Generates a new temporary password for a staff member. Returns 200 with Cache-Control: no-store. Rate limited.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description User MongoDB ObjectId */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Password reset successfully */
+                200: {
+                    headers: {
+                        /** @description Prevents credential caching */
+                        "Cache-Control"?: string;
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessResponse"] & {
+                            data: {
+                                temporaryPassword: string;
+                            };
+                        };
+                    };
+                };
+                /** @description Invalid identifier (INVALID_ID) */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Forbidden - Insufficient permissions */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description User not found (USER_NOT_FOUND) */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Rate limit exceeded */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/auth/signup": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Register new Tenant and Owner
+         * @description Creates a new tenant and initial OWNER user account. Fails with 409 if email is already registered.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            /** @description Account signup information */
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        businessName: string;
+                        name: string;
+                        /** Format: email */
+                        email: string;
+                        password: string;
+                        phone?: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description Tenant and OWNER account created successfully */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** @enum {boolean} */
+                            success: true;
+                            message: string;
+                            data: {
+                                user: {
+                                    id: string;
+                                    tenantId: string;
+                                    name: string;
+                                    email: string;
+                                    /** @enum {string} */
+                                    role: "OWNER";
+                                    emailVerified: boolean;
+                                };
+                            };
+                        };
+                    };
+                };
+                /** @description Validation failed or disallowed fields present */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Email is already registered */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Rate limit exceeded */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/auth/login": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * User login
+         * @description Authenticates user with email and password, issuing an access token and HttpOnly refresh cookie.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            /** @description Login credentials */
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        /** Format: email */
+                        email: string;
+                        password: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description Login successful */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** @enum {boolean} */
+                            success: true;
+                            message: string;
+                            data: {
+                                accessToken: string;
+                                user: {
+                                    id: string;
+                                    tenantId: string;
+                                    name: string;
+                                    email: string;
+                                    /** @enum {string} */
+                                    role: "OWNER" | "ADMIN" | "MANAGER" | "WAITER" | "CASHIER" | "CHEF";
+                                    emailVerified?: boolean;
+                                    branchIds: string[];
+                                    mustChangePassword: boolean;
+                                };
+                            };
+                        };
+                    };
+                };
+                /** @description Validation failed */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Invalid email or password */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Account disabled, email unverified, or tenant suspended */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Rate limit exceeded */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/auth/logout": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * User logout
+         * @description Revokes active refresh token family and clears HttpOnly refresh cookie. Idempotent.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Logged out successfully */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessResponse"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/auth/refresh": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Rotate refresh token
+         * @description Rotates refresh token atomically, issues a new access token, and sets a new HttpOnly refresh cookie.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Token refreshed successfully */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** @enum {boolean} */
+                            success: true;
+                            message: string;
+                            data: {
+                                accessToken: string;
+                                user: {
+                                    id: string;
+                                    tenantId: string;
+                                    name: string;
+                                    email: string;
+                                    /** @enum {string} */
+                                    role: "OWNER" | "ADMIN" | "MANAGER" | "WAITER" | "CASHIER" | "CHEF";
+                                    emailVerified?: boolean;
+                                    branchIds: string[];
+                                    mustChangePassword: boolean;
+                                };
+                            };
+                        };
+                    };
+                };
+                /** @description Invalid, expired, or reused refresh token */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Rate limit exceeded */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/auth/change-password": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Change password
+         * @description Allows authenticated user to change password. Invalidates all active refresh token families across all devices.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            /** @description Current and new password */
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        currentPassword: string;
+                        newPassword: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description Password changed successfully */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** @enum {boolean} */
+                            success: true;
+                            message: string;
+                        };
+                    };
+                };
+                /** @description Invalid current password or validation failure */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Unauthorized or token invalid */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Rate limit exceeded */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/auth/verify-email": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Verify user email
+         * @description Atomically verifies user email address using single-use verification token.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            /** @description Email verification token */
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        token: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description Email verified successfully */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** @enum {boolean} */
+                            success: true;
+                            message: string;
+                        };
+                    };
+                };
+                /** @description Invalid, used, or expired verification token */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Rate limit exceeded */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/auth/resend-verification": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Resend email verification
+         * @description Sends a new email verification link if the account exists and is unverified. 60-second cooldown per user.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            /** @description User email address */
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        /** Format: email */
+                        email: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description Generic success message regardless of account existence */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** @enum {boolean} */
+                            success: true;
+                            message: string;
+                        };
+                    };
+                };
+                /** @description Validation failure */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Rate limit exceeded */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/auth/forgot-password": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Request password reset
+         * @description Sends password reset link if account exists and is ACTIVE. 60-second cooldown per user.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            /** @description User email address */
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        /** Format: email */
+                        email: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description Generic success message regardless of account existence */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** @enum {boolean} */
+                            success: true;
+                            message: string;
+                        };
+                    };
+                };
+                /** @description Validation failure */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Rate limit exceeded */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/auth/reset-password": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Reset password with token
+         * @description Resets password using single-use reset token, updates email verification status, and invalidates all active sessions.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            /** @description Reset token and new password */
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        token: string;
+                        newPassword: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description Password reset successfully */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** @enum {boolean} */
+                            success: true;
+                            message: string;
+                        };
+                    };
+                };
+                /** @description Invalid, used, or expired reset token, or validation error */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Rate limit exceeded */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
