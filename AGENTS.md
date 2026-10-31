@@ -114,7 +114,7 @@ Module rules:
 
 ## Auth
 
-- Tokens in httpOnly cookies where possible (refresh cookie scoped to /api/v1/auth; access token in memory). Refresh and logout handled in the Axios interceptor and one auth utility. Route protection and auth redirects are handled client-side in route guards.
+- Tokens in httpOnly cookies where possible (refresh cookie scoped to /api/v1/auth; access token in memory). Token storage and refresh logic live in `shared/lib/` (never in `modules/`), and refresh/logout are handled in the Axios interceptor and authSession utility. Route protection and auth redirects are handled client-side in route guards.
 - Role-aware UI: hide what a role cannot use, but never rely on the UI for security, the backend enforces it.
 
 ---
