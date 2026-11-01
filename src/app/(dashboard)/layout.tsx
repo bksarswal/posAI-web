@@ -1,7 +1,34 @@
-import type { ReactNode } from 'react';
+'use client';
+
+import { useEffect, type ReactNode } from 'react';
 import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
+import { useAuth } from '@/modules/auth';
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
+  const { isInitialized, isAuthenticated } = useAuth();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  // Client-side route guard: redirect unauthenticated users to /login with returnUrl
+  useEffect(() => {
+    if (!isInitialized) return;
+    if (!isAuthenticated) {
+      router.push(`/login?returnUrl=${encodeURIComponent(pathname)}`);
+    }
+  }, [isInitialized, isAuthenticated, router, pathname]);
+
+  // While session is initializing, render nothing to avoid a flash of protected content
+  if (!isInitialized) {
+    return null;
+  }
+
+  // After initialization, if unauthenticated the effect above fires the redirect;
+  // render null in the meantime to avoid flashing protected content.
+  if (!isAuthenticated) {
+    return null;
+  }
+
   return (
     <div className="min-h-screen bg-slate-50">
       <header className="sticky top-0 z-10 border-b border-slate-200 bg-white shadow-xs">

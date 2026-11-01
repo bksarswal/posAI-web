@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor, act } from '@testing-library/react';
+import { StrictMode } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider, useAuth } from './AuthProvider';
 import * as authSession from '@/shared/lib/authSession';
@@ -133,5 +134,42 @@ describe('AuthProvider (src/modules/auth/AuthProvider.tsx)', () => {
 
     expect(clearSpy).toHaveBeenCalled();
     expect(mockPush).toHaveBeenCalledWith('/login');
+  });
+
+  it('makes exactly ONE refresh request even inside React.StrictMode (double-invoke)', async () => {
+    const refreshSpy = vi.spyOn(authSession, 'refreshSession').mockImplementation(async () => {
+      tokenStorage.setAccessToken('test-token');
+      return {
+        accessToken: 'test-token',
+        user: {
+          id: '123',
+          tenantId: 't1',
+          name: 'User',
+          email: 'user@posai.com',
+          role: 'OWNER',
+          branchIds: [],
+          mustChangePassword: false,
+        },
+      };
+    });
+
+    render(
+      <StrictMode>
+        <QueryClientProvider client={queryClient}>
+          <AuthProvider>
+            <ConsumerComponent />
+          </AuthProvider>
+        </QueryClientProvider>
+      </StrictMode>,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId('isInitialized').textContent).toBe('true');
+    });
+
+    // StrictMode double-invokes effects in development, but hasRefreshedRef must prevent
+    // a second refresh call — exactly one network request must be made.
+    expect(refreshSpy).toHaveBeenCalledTimes(1);
+    expect(screen.getByTestId('isAuthenticated').textContent).toBe('true');
   });
 });

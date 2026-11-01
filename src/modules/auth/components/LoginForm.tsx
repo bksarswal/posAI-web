@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useQueryClient } from '@tanstack/react-query';
 import { Form, Input } from 'antd';
 import { AlertCircle, ArrowRight, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
@@ -11,6 +12,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/shared/ui/alert';
 import { ERROR_CODES } from '@/shared/constants/errorCodes';
 import { parseApiError, toFormFieldErrors } from '@/shared/lib/apiError';
 import { createZodAntdRule } from '@/shared/lib/zodAntdRule';
+import { getSafeRedirectPath } from '@/shared/lib/safeRedirect';
 import { useLogin } from '../auth.hooks';
 import { loginSchema } from '../auth.schema';
 import type { LoginInput } from '../auth.types';
@@ -31,6 +33,7 @@ interface BannerState {
 export function LoginForm() {
   const [form] = Form.useForm<LoginInput>();
   const router = useRouter();
+  const queryClient = useQueryClient();
   const searchParams = useSearchParams();
   const returnUrl = searchParams.get('returnUrl');
 
@@ -44,11 +47,15 @@ export function LoginForm() {
       const response = await loginMutation.mutateAsync(values);
 
       if (response.data.user.mustChangePassword) {
-        router.push('/change-password?forced=true');
+        // No redirect loop: user just logged in from /login, can't already be on /change-password
+        queryClient.clear();
+        router.push('/change-password');
         return;
       }
 
-      router.push(returnUrl && returnUrl.startsWith('/') ? returnUrl : '/dashboard');
+      // Clear stale data from any previous session before navigating
+      queryClient.clear();
+      router.push(getSafeRedirectPath(returnUrl));
     } catch (err) {
       const parsed = parseApiError(err);
 

@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
+import { StrictMode } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { VerifyEmailCard } from './VerifyEmailCard';
 import * as authApi from '../auth.api';
@@ -102,5 +103,30 @@ describe('VerifyEmailCard (src/modules/auth/components/VerifyEmailCard.tsx)', ()
         '/resend-verification',
       );
     });
+  });
+
+  it('calls the verifyEmail API exactly once inside React.StrictMode (double-invoke guard)', async () => {
+    mockSearchParams = new URLSearchParams('token=strict-mode-token');
+    const verifySpy = vi.spyOn(authApi, 'verifyEmail').mockResolvedValue({
+      success: true,
+      message: 'Email verified successfully',
+    });
+
+    render(
+      <StrictMode>
+        <QueryClientProvider client={queryClient}>
+          <VerifyEmailCard />
+        </QueryClientProvider>
+      </StrictMode>,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('Email verified!')).toBeInTheDocument();
+    });
+
+    // StrictMode double-invokes effects in development; hasTriggeredRef must prevent
+    // a second verifyEmail call — the API must be called exactly once.
+    expect(verifySpy).toHaveBeenCalledTimes(1);
+    expect(verifySpy).toHaveBeenCalledWith('strict-mode-token');
   });
 });

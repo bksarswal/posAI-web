@@ -64,7 +64,7 @@ describe('LoginForm (src/modules/auth/components/LoginForm.tsx)', () => {
     });
   });
 
-  it('submits form and navigates to /dashboard on successful login', async () => {
+  it('clears the query cache and navigates to /dashboard on successful login', async () => {
     const user = userEvent.setup();
     const loginSpy = vi.spyOn(authApi, 'login').mockResolvedValue({
       success: true,
@@ -83,6 +83,8 @@ describe('LoginForm (src/modules/auth/components/LoginForm.tsx)', () => {
       },
     });
 
+    const clearSpy = vi.spyOn(queryClient, 'clear');
+
     renderComponent();
 
     const emailInput = screen.getByPlaceholderText('you@restaurant.com');
@@ -98,11 +100,18 @@ describe('LoginForm (src/modules/auth/components/LoginForm.tsx)', () => {
         email: 'priya@restaurant.com',
         password: 'validPassword123!',
       });
+      // Cache must be cleared BEFORE navigation
+      expect(clearSpy).toHaveBeenCalled();
       expect(mockPush).toHaveBeenCalledWith('/dashboard');
     });
+
+    // Confirm order: clear happened before push
+    const clearOrder = clearSpy.mock.invocationCallOrder[0];
+    const pushOrder = mockPush.mock.invocationCallOrder[0];
+    expect(clearOrder).toBeLessThan(pushOrder);
   });
 
-  it('navigates to returnUrl on successful login if present in search params', async () => {
+  it('navigates to safe returnUrl on successful login if present in search params', async () => {
     mockSearchParams = new URLSearchParams('returnUrl=/profile');
     const user = userEvent.setup();
     vi.spyOn(authApi, 'login').mockResolvedValue({
@@ -133,7 +142,40 @@ describe('LoginForm (src/modules/auth/components/LoginForm.tsx)', () => {
     });
   });
 
-  it('navigates to /change-password?forced=true when user.mustChangePassword is true', async () => {
+  it('falls back to /dashboard when returnUrl is a malicious open-redirect target', async () => {
+    mockSearchParams = new URLSearchParams('returnUrl=//evil.com');
+    const user = userEvent.setup();
+    vi.spyOn(authApi, 'login').mockResolvedValue({
+      success: true,
+      message: 'Login successful',
+      data: {
+        accessToken: 'access-123',
+        user: {
+          id: 'u-1',
+          tenantId: 't-1',
+          name: 'Priya',
+          email: 'priya@restaurant.com',
+          role: 'OWNER',
+          branchIds: [],
+          mustChangePassword: false,
+        },
+      },
+    });
+
+    renderComponent();
+
+    await user.type(screen.getByPlaceholderText('you@restaurant.com'), 'priya@restaurant.com');
+    await user.type(screen.getByPlaceholderText('••••••••'), 'validPassword123!');
+    await user.click(screen.getByRole('button', { name: /sign in/i }));
+
+    await waitFor(() => {
+      // Must NOT navigate to //evil.com — must fall back to /dashboard
+      expect(mockPush).toHaveBeenCalledWith('/dashboard');
+      expect(mockPush).not.toHaveBeenCalledWith('//evil.com');
+    });
+  });
+
+  it('navigates to /change-password when user.mustChangePassword is true', async () => {
     const user = userEvent.setup();
     vi.spyOn(authApi, 'login').mockResolvedValue({
       success: true,
@@ -159,7 +201,7 @@ describe('LoginForm (src/modules/auth/components/LoginForm.tsx)', () => {
     await user.click(screen.getByRole('button', { name: /sign in/i }));
 
     await waitFor(() => {
-      expect(mockPush).toHaveBeenCalledWith('/change-password?forced=true');
+      expect(mockPush).toHaveBeenCalledWith('/change-password');
     });
   });
 

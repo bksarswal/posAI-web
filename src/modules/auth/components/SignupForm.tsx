@@ -2,9 +2,8 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { Form, Input } from 'antd';
-import { AlertCircle, ArrowRight, Loader2, Mail } from 'lucide-react';
+import { AlertCircle, ArrowRight, CheckCircle2, Loader2, Mail } from 'lucide-react';
 import { Button, buttonVariants } from '@/shared/ui/button';
 import { Alert, AlertDescription, AlertTitle } from '@/shared/ui/alert';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/shared/ui/card';
@@ -16,10 +15,10 @@ import type { SignupInput } from '../auth.types';
 
 export function SignupForm() {
   const [form] = Form.useForm<SignupInput>();
-  const router = useRouter();
 
   const [submittedEmail, setSubmittedEmail] = useState<string | null>(null);
   const [isSuccessAwaitingVerification, setIsSuccessAwaitingVerification] = useState(false);
+  const [isVerifiedSuccess, setIsVerifiedSuccess] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const signupMutation = useSignup();
@@ -32,8 +31,9 @@ export function SignupForm() {
       const user = response.data.user;
 
       if (user.emailVerified) {
-        // AUTO_VERIFY_EMAIL=true in dev environment -> proceed straight to dashboard
-        router.push('/dashboard');
+        // AUTO_VERIFY_EMAIL=true in dev: signup issues no token, so we never navigate to /dashboard.
+        // Show a confirmation with a link to log in instead.
+        setIsVerifiedSuccess(true);
       } else {
         // Verification email sent
         setSubmittedEmail(user.email);
@@ -49,6 +49,35 @@ export function SignupForm() {
       setErrorMessage(parsed.message || 'Signup failed. Please check the form and try again.');
     }
   };
+
+  // Auto-verified success (no token issued — show login prompt)
+  if (isVerifiedSuccess) {
+    return (
+      <Card className="border-slate-200 shadow-sm">
+        <CardHeader className="text-center pb-4">
+          <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
+            <CheckCircle2 className="h-7 w-7" />
+          </div>
+          <CardTitle className="text-2xl font-bold tracking-tight text-slate-900">
+            Account created
+          </CardTitle>
+          <CardDescription className="text-base text-slate-600 pt-1">
+            Your account is ready. You can log in now.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="text-center space-y-4">
+          <Link
+            href="/login"
+            className={buttonVariants({
+              className: 'h-11 w-full text-base font-medium',
+            })}
+          >
+            Go to sign in
+          </Link>
+        </CardContent>
+      </Card>
+    );
+  }
 
   // If signup succeeded and email verification is needed, show confirmation screen
   if (isSuccessAwaitingVerification && submittedEmail) {

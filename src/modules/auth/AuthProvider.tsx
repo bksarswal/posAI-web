@@ -55,7 +55,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         router.push('/login');
       },
       onPasswordChangeRequired: () => {
-        router.push('/change-password?forced=true');
+        // Guard against a redirect loop if the user is already on /change-password
+        if (typeof window !== 'undefined' && window.location.pathname === '/change-password') {
+          return;
+        }
+        router.push('/change-password');
       },
     });
   }, [router, queryClient]);

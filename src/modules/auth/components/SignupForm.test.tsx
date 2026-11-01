@@ -57,7 +57,7 @@ describe('SignupForm (src/modules/auth/components/SignupForm.tsx)', () => {
     });
   });
 
-  it('navigates directly to /dashboard when user is auto-verified (AUTO_VERIFY_EMAIL=true)', async () => {
+  it('shows "Account created" success screen when user is auto-verified (never navigates to /dashboard)', async () => {
     const user = userEvent.setup();
     const signupSpy = vi.spyOn(authApi, 'signup').mockResolvedValue({
       success: true,
@@ -69,7 +69,7 @@ describe('SignupForm (src/modules/auth/components/SignupForm.tsx)', () => {
           name: 'Priya Sharma',
           email: 'priya@spicegarden.com',
           role: 'OWNER',
-          emailVerified: true, // auto-verified
+          emailVerified: true, // AUTO_VERIFY_EMAIL=true
         },
       },
     });
@@ -91,7 +91,15 @@ describe('SignupForm (src/modules/auth/components/SignupForm.tsx)', () => {
           password: 'Password123!',
         }),
       );
-      expect(mockPush).toHaveBeenCalledWith('/dashboard');
+      // Must NOT navigate to /dashboard — signup issues no token
+      expect(mockPush).not.toHaveBeenCalled();
+      // Must show the "Account created" confirmation screen with a login link
+      expect(screen.getByText('Account created')).toBeInTheDocument();
+      expect(screen.getByText('Your account is ready. You can log in now.')).toBeInTheDocument();
+      expect(screen.getByRole('link', { name: /go to sign in/i })).toHaveAttribute(
+        'href',
+        '/login',
+      );
     });
   });
 
@@ -124,6 +132,8 @@ describe('SignupForm (src/modules/auth/components/SignupForm.tsx)', () => {
     await user.click(screen.getByRole('button', { name: /get started/i }));
 
     await waitFor(() => {
+      // Must NOT navigate anywhere — show inline confirmation
+      expect(mockPush).not.toHaveBeenCalled();
       expect(screen.getByText('Check your email')).toBeInTheDocument();
       expect(screen.getByText('unverified@spicegarden.com')).toBeInTheDocument();
       expect(screen.getByRole('link', { name: /resend verification email/i })).toHaveAttribute(

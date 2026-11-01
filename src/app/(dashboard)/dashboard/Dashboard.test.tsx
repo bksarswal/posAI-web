@@ -5,6 +5,7 @@ import DashboardPage from './page';
 import * as authContext from '@/modules/auth/AuthProvider';
 import * as authApi from '@/modules/auth/auth.api';
 import * as userApi from '@/modules/user/user.api';
+import * as tokenStorage from '@/shared/lib/tokenStorage';
 import { ApiError } from '@/shared/lib/axios';
 
 const mockPush = vi.fn();
@@ -99,7 +100,7 @@ describe('DashboardPage (src/app/(dashboard)/dashboard/page.tsx)', () => {
     });
   });
 
-  it('handles logout button click and redirects to /login', async () => {
+  it('logout clears the token and the query cache and redirects to /login', async () => {
     vi.spyOn(authContext, 'useAuth').mockReturnValue({
       isInitialized: true,
       isAuthenticated: true,
@@ -130,6 +131,10 @@ describe('DashboardPage (src/app/(dashboard)/dashboard/page.tsx)', () => {
     });
 
     const logoutSpy = vi.spyOn(authApi, 'logout').mockResolvedValue(undefined);
+    const clearSpy = vi.spyOn(queryClient, 'clear');
+
+    // Set a token so we can verify it is cleared
+    tokenStorage.setAccessToken('pre-logout-token');
 
     render(
       <QueryClientProvider client={queryClient}>
@@ -146,6 +151,11 @@ describe('DashboardPage (src/app/(dashboard)/dashboard/page.tsx)', () => {
 
     await waitFor(() => {
       expect(logoutSpy).toHaveBeenCalled();
+      // Token must be cleared
+      expect(tokenStorage.getAccessToken()).toBeNull();
+      // Query cache must be cleared
+      expect(clearSpy).toHaveBeenCalled();
+      // Must redirect to /login
       expect(mockPush).toHaveBeenCalledWith('/login');
     });
   });
