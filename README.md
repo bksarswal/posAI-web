@@ -12,6 +12,71 @@ Frontend application for **POSAI** — a multi-tenant Restaurant POS SaaS platfo
 
 ---
 
+## Running Locally with the API
+
+Run both services in **separate terminals**. The web app calls the backend directly via Axios; there is no Next.js proxy involved.
+
+### Backend (`posai-api`) — port 8080
+
+```bash
+cd posai-api
+cp .env.example .env      # then fill in the values below
+npm run dev               # or: npm start
+```
+
+Required env vars on the **API side** (matching `posAI-api/.env.example`):
+
+| Variable                   | Example / Default                 | Description                                                                      |
+| -------------------------- | --------------------------------- | -------------------------------------------------------------------------------- |
+| `NODE_ENV`                 | `development`                     | Server environment (`development`, `test`, `production`)                         |
+| `PORT`                     | `8080`                            | Port Express listens on                                                          |
+| `MONGODB_URI`              | `mongodb://localhost:27017/posai` | Connection string (replica set e.g. `?replicaSet=rs0` required for transactions) |
+| `JWT_ACCESS_SECRET`        | `min 32 random chars`             | Secret used to sign and verify access token JWTs                                 |
+| `ACCESS_TOKEN_TTL_MINUTES` | `15`                              | Access token lifetime in minutes                                                 |
+| `REFRESH_TOKEN_TTL_DAYS`   | `7`                               | Refresh token lifetime in days                                                   |
+| `CLIENT_URL`               | `http://localhost:3000`           | Allowed CORS origin — frontend origin (no trailing slash)                        |
+| `BCRYPT_ROUNDS`            | `12`                              | Bcrypt salt rounds (4–15)                                                        |
+| `AUTO_VERIFY_EMAIL`        | `false` (or `true` in dev)        | Auto-verifies email at signup when `true`                                        |
+| `TRUST_PROXY`              | `0`                               | Number of reverse proxies in front of Express                                    |
+| `EMAIL_PROVIDER`           | `log`                             | `log` prints verification & reset links to terminal; `smtp` sends email          |
+| `EMAIL_FROM`               | `noreply@posai.app`               | Sender address (required when `EMAIL_PROVIDER=smtp`)                             |
+| `SMTP_HOST`                | `smtp.mailgun.org`                | SMTP server host (required when `EMAIL_PROVIDER=smtp`)                           |
+| `SMTP_PORT`                | `587`                             | SMTP server port (required when `EMAIL_PROVIDER=smtp`)                           |
+| `SMTP_USER`                | `postmaster@posai.app`            | SMTP username (required when `EMAIL_PROVIDER=smtp`)                              |
+| `SMTP_PASS`                | `secret-smtp-password`            | SMTP password (required when `EMAIL_PROVIDER=smtp`)                              |
+| `LOG_LEVEL`                | `info`                            | Pino log level (`fatal`, `error`, `warn`, `info`, `debug`, `trace`, `silent`)    |
+
+> [!NOTE]
+> `JWT_REFRESH_SECRET` is not used by the runtime auth service because `posai-api` issues opaque cryptographically-random tokens stored as SHA-256 hashes in MongoDB, not signed JWTs.
+
+### Frontend (`posai-web`) — port 3000
+
+```bash
+cd posai-web
+cp .env.example .env.local   # already contains the correct default below
+npm run dev
+```
+
+Required env vars on the **web side**:
+
+| Variable              | Value                          |
+| --------------------- | ------------------------------ |
+| `NEXT_PUBLIC_API_URL` | `http://localhost:8080/api/v1` |
+
+> [!NOTE]
+> With `EMAIL_PROVIDER=log`, verification and password-reset links are printed to the **API terminal**. Copy the link and open it in the browser.
+> With `AUTO_VERIFY_EMAIL=true`, new accounts are verified immediately and the signup form shows "Account created — you can log in now" without sending any email.
+
+### Both services at a glance
+
+```
+posAI/
+├── posai-api/    →  npm run dev    →  http://localhost:8080
+└── posai-web/    →  npm run dev    →  http://localhost:3000
+```
+
+---
+
 ## Setup & Getting Started
 
 1. **Repository Layout**:
