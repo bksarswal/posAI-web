@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
-import { AntdRegistry } from '@ant-design/nextjs-registry';
-import { QueryProvider } from '@/shared/components/providers/QueryProvider';
+import { AppProviders } from '@/shared/components/providers/AppProviders';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -15,10 +14,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="antialiased">
-        <AntdRegistry>
-          <QueryProvider>{children}</QueryProvider>
-        </AntdRegistry>
+      <body className="antialiased min-h-screen bg-slate-50 text-slate-900">
+        <AppProviders>{children}</AppProviders>
       </body>
     </html>
   );
