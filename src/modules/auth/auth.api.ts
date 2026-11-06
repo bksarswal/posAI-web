@@ -6,6 +6,9 @@ import type {
   LoginResponse,
   VerifyEmailResponse,
   ResendVerificationResponse,
+  ForgotPasswordResponse,
+  ResetPasswordApiInput,
+  ResetPasswordResponse,
 } from './auth.types';
 
 export async function signup(payload: SignupInput): Promise<SignupResponse> {
@@ -31,5 +34,19 @@ export async function resendVerification(email: string): Promise<ResendVerificat
   const response = await apiClient.post<ResendVerificationResponse>('/auth/resend-verification', {
     email,
   });
+  return response.data;
+}
+
+export async function forgotPassword(email: string): Promise<ForgotPasswordResponse> {
+  const response = await apiClient.post<ForgotPasswordResponse>('/auth/forgot-password', {
+    email,
+  });
+  return response.data;
+}
+
+export async function resetPassword(
+  payload: ResetPasswordApiInput,
+): Promise<ResetPasswordResponse> {
+  const response = await apiClient.post<ResetPasswordResponse>('/auth/reset-password', payload);
   return response.data;
 }

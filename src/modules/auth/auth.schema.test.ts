@@ -5,6 +5,7 @@ import {
   forgotPasswordSchema,
   resendVerificationSchema,
   resetPasswordSchema,
+  resetPasswordApiSchema,
   changePasswordSchema,
 } from './auth.schema';
 
@@ -70,6 +71,25 @@ describe('Auth Schemas (src/modules/auth/auth.schema.ts)', () => {
       });
       expect(parsed).toEqual({ newPassword: 'Password123!' });
       expect(parsed).not.toHaveProperty('confirmPassword');
+    });
+  });
+
+  describe('resetPasswordApiSchema', () => {
+    it('validates token and newPassword matching API contract', () => {
+      const valid = {
+        token: 'valid-reset-token-123',
+        newPassword: 'Password123!',
+      };
+      expect(resetPasswordApiSchema.parse(valid)).toEqual(valid);
+    });
+
+    it('rejects missing or empty token', () => {
+      expect(() =>
+        resetPasswordApiSchema.parse({
+          token: '',
+          newPassword: 'Password123!',
+        }),
+      ).toThrow();
     });
   });
 

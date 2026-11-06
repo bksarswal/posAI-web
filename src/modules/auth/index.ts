@@ -8,3 +8,5 @@ export * from './components/LoginForm';
 export * from './components/SignupForm';
 export * from './components/VerifyEmailCard';
 export * from './components/ResendVerificationForm';
+export * from './components/ForgotPasswordForm';
+export * from './components/ResetPasswordForm';

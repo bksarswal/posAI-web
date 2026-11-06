@@ -1,4 +1,10 @@
-export type { SignupInput, LoginInput } from './auth.schema';
+export type {
+  SignupInput,
+  LoginInput,
+  ForgotPasswordInput,
+  ResetPasswordInput,
+  ResetPasswordApiInput,
+} from './auth.schema';
 
 export interface SignupUserData {
   id: string;
@@ -43,6 +49,16 @@ export interface VerifyEmailResponse {
 }
 
 export interface ResendVerificationResponse {
+  success: true;
+  message: string;
+}
+
+export interface ForgotPasswordResponse {
+  success: true;
+  message: string;
+}
+
+export interface ResetPasswordResponse {
   success: true;
   message: string;
 }

@@ -4,7 +4,15 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { setAccessToken } from '@/shared/lib/tokenStorage';
 import type { ApiError } from '@/shared/lib/axios';
-import { signup, login, logout, verifyEmail, resendVerification } from './auth.api';
+import {
+  signup,
+  login,
+  logout,
+  verifyEmail,
+  resendVerification,
+  forgotPassword,
+  resetPassword,
+} from './auth.api';
 import type {
   SignupInput,
   SignupResponse,
@@ -12,6 +20,9 @@ import type {
   LoginResponse,
   VerifyEmailResponse,
   ResendVerificationResponse,
+  ForgotPasswordResponse,
+  ResetPasswordApiInput,
+  ResetPasswordResponse,
 } from './auth.types';
 
 export function useSignup() {
@@ -52,5 +63,17 @@ export function useVerifyEmail() {
 export function useResendVerification() {
   return useMutation<ResendVerificationResponse, ApiError, string>({
     mutationFn: (email) => resendVerification(email),
+  });
+}
+
+export function useForgotPassword() {
+  return useMutation<ForgotPasswordResponse, ApiError, string>({
+    mutationFn: (email) => forgotPassword(email),
+  });
+}
+
+export function useResetPassword() {
+  return useMutation<ResetPasswordResponse, ApiError, ResetPasswordApiInput>({
+    mutationFn: (data) => resetPassword(data),
   });
 }
