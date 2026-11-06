@@ -2,6 +2,7 @@
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 import { setAccessToken } from '@/shared/lib/tokenStorage';
 import type { ApiError } from '@/shared/lib/axios';
 import {
@@ -12,6 +13,7 @@ import {
   resendVerification,
   forgotPassword,
   resetPassword,
+  changePassword,
 } from './auth.api';
 import type {
   SignupInput,
@@ -23,6 +25,8 @@ import type {
   ForgotPasswordResponse,
   ResetPasswordApiInput,
   ResetPasswordResponse,
+  ChangePasswordOutput,
+  ChangePasswordResponse,
 } from './auth.types';
 
 export function useSignup() {
@@ -75,5 +79,20 @@ export function useForgotPassword() {
 export function useResetPassword() {
   return useMutation<ResetPasswordResponse, ApiError, ResetPasswordApiInput>({
     mutationFn: (data) => resetPassword(data),
+  });
+}
+
+export function useChangePassword() {
+  const router = useRouter();
+  const queryClient = useQueryClient();
+
+  return useMutation<ChangePasswordResponse, ApiError, ChangePasswordOutput>({
+    mutationFn: (data) => changePassword(data),
+    onSuccess: () => {
+      setAccessToken(null);
+      queryClient.clear();
+      toast.success('Password changed, please log in again');
+      router.push('/login');
+    },
   });
 }

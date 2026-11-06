@@ -59,4 +59,34 @@ describe('DashboardLayout route guard (src/app/(dashboard)/layout.tsx)', () => {
       expect(mockPush).toHaveBeenCalledWith(expect.stringContaining('/login'));
     });
   });
+
+  it('redirects to /change-password when authenticated user has mustChangePassword=true', async () => {
+    tokenStorage.setAccessToken('valid-token');
+    vi.spyOn(authSession, 'refreshSession').mockResolvedValue({
+      accessToken: 'valid-token',
+      user: {
+        id: 'u-1',
+        tenantId: 't-1',
+        name: 'Test',
+        email: 'test@posai.com',
+        role: 'ADMIN',
+        branchIds: [],
+        mustChangePassword: true,
+      },
+    });
+
+    queryClient.setQueryData(['users', 'me'], {
+      success: true,
+      message: 'OK',
+      data: {
+        user: { mustChangePassword: true, id: 'u-1' },
+      },
+    });
+
+    renderLayout();
+
+    await waitFor(() => {
+      expect(mockPush).toHaveBeenCalledWith('/change-password');
+    });
+  });
 });

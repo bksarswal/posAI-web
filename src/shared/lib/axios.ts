@@ -1,7 +1,7 @@
 import axios, { type AxiosError, type InternalAxiosRequestConfig } from 'axios';
 import { env } from './env';
 import { getAccessToken } from './tokenStorage';
-import { refreshSession, endSession, getPasswordChangeRequiredHandler } from './authSession';
+import { refreshSession, endSession, notifyPasswordChangeRequired } from './authSession';
 import { ERROR_CODES } from '../constants/errorCodes';
 
 declare module 'axios' {
@@ -136,7 +136,7 @@ apiClient.interceptors.response.use(
 
     // 1. Password change required gate (403): notify handler and do NOT log out
     if (apiError.statusCode === 403 && apiError.code === ERROR_CODES.PASSWORD_CHANGE_REQUIRED) {
-      getPasswordChangeRequiredHandler()();
+      notifyPasswordChangeRequired();
       return Promise.reject(apiError);
     }
 

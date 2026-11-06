@@ -10,3 +10,5 @@ export * from './components/VerifyEmailCard';
 export * from './components/ResendVerificationForm';
 export * from './components/ForgotPasswordForm';
 export * from './components/ResetPasswordForm';
+export * from './components/ChangePasswordForm';
+export * from './guards/AppAuthGuard';

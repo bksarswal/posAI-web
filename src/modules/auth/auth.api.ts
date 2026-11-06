@@ -9,6 +9,8 @@ import type {
   ForgotPasswordResponse,
   ResetPasswordApiInput,
   ResetPasswordResponse,
+  ChangePasswordOutput,
+  ChangePasswordResponse,
 } from './auth.types';
 
 export async function signup(payload: SignupInput): Promise<SignupResponse> {
@@ -48,5 +50,12 @@ export async function resetPassword(
   payload: ResetPasswordApiInput,
 ): Promise<ResetPasswordResponse> {
   const response = await apiClient.post<ResetPasswordResponse>('/auth/reset-password', payload);
+  return response.data;
+}
+
+export async function changePassword(
+  payload: ChangePasswordOutput,
+): Promise<ChangePasswordResponse> {
+  const response = await apiClient.post<ChangePasswordResponse>('/auth/change-password', payload);
   return response.data;
 }

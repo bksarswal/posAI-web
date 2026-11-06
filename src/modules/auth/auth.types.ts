@@ -4,6 +4,8 @@ export type {
   ForgotPasswordInput,
   ResetPasswordInput,
   ResetPasswordApiInput,
+  ChangePasswordInput,
+  ChangePasswordOutput,
 } from './auth.schema';
 
 export interface SignupUserData {
@@ -59,6 +61,11 @@ export interface ForgotPasswordResponse {
 }
 
 export interface ResetPasswordResponse {
+  success: true;
+  message: string;
+}
+
+export interface ChangePasswordResponse {
   success: true;
   message: string;
 }

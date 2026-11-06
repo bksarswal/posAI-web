@@ -30,11 +30,13 @@ export interface AuthHandlers {
 let sessionEndedHandler: (reason: SessionEndedReason) => void = () => {};
 let passwordChangeRequiredHandler: () => void = () => {};
 let isSessionEnded = false;
+let isPasswordChangeNotified = false;
 
-// When a non-null token is stored, reset the ended-session notification guard
+// When a non-null token is stored, reset the ended-session and password-change notification guards
 subscribe(() => {
   if (getAccessToken() !== null) {
     isSessionEnded = false;
+    isPasswordChangeNotified = false;
   }
 });
 
@@ -69,6 +71,21 @@ export function registerAuthHandlers(handlers: AuthHandlers): void {
  */
 export function getPasswordChangeRequiredHandler(): () => void {
   return passwordChangeRequiredHandler;
+}
+
+/**
+ * Triggers onPasswordChangeRequired exactly once per required password change.
+ * Does NOT clear access token or end session.
+ */
+export function notifyPasswordChangeRequired(): void {
+  if (!isPasswordChangeNotified) {
+    isPasswordChangeNotified = true;
+    try {
+      passwordChangeRequiredHandler();
+    } catch (err) {
+      console.error('Error executing onPasswordChangeRequired handler', err);
+    }
+  }
 }
 
 /**
@@ -146,6 +163,7 @@ export function _resetAuthSessionForTesting(): void {
   sessionEndedHandler = () => {};
   passwordChangeRequiredHandler = () => {};
   isSessionEnded = false;
+  isPasswordChangeNotified = false;
   refreshPromise = null;
   setAccessToken(null);
 }

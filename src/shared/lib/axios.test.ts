@@ -532,6 +532,48 @@ describe('apiClient and Axios Interceptors', () => {
     expect(getAccessToken()).toBe('active-token'); // Did NOT log out
   });
 
+  it('403 PASSWORD_CHANGE_REQUIRED triggers the redirect exactly once', async () => {
+    setAccessToken('active-token');
+    const onPasswordChangeRequired = vi.fn();
+    const onSessionEnded = vi.fn();
+    registerAuthHandlers({ onPasswordChangeRequired, onSessionEnded });
+
+    apiClient.defaults.adapter = async (config: InternalAxiosRequestConfig) => {
+      throw new AxiosError(
+        'Password change required',
+        'ERR_BAD_REQUEST',
+        config,
+        {},
+        {
+          status: 403,
+          statusText: 'Forbidden',
+          headers: {},
+          config,
+          data: {
+            success: false,
+            message: 'Password change required',
+            code: ERROR_CODES.PASSWORD_CHANGE_REQUIRED,
+          },
+        },
+      );
+    };
+
+    // Fire two requests that both hit 403 PASSWORD_CHANGE_REQUIRED
+    await expect(apiClient.get('/branches')).rejects.toMatchObject({
+      code: ERROR_CODES.PASSWORD_CHANGE_REQUIRED,
+      statusCode: 403,
+    });
+    await expect(apiClient.get('/staff')).rejects.toMatchObject({
+      code: ERROR_CODES.PASSWORD_CHANGE_REQUIRED,
+      statusCode: 403,
+    });
+
+    // Guard ensures the redirect handler is called exactly once
+    expect(onPasswordChangeRequired).toHaveBeenCalledTimes(1);
+    expect(onSessionEnded).not.toHaveBeenCalled();
+    expect(getAccessToken()).toBe('active-token');
+  });
+
   it('A network failure -> normalized NETWORK_ERROR (Test 13)', async () => {
     apiClient.defaults.adapter = async (config: InternalAxiosRequestConfig) => {
       // Simulate network disconnection (no response property)
