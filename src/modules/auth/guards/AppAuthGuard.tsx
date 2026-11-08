@@ -4,10 +4,63 @@ import { useEffect, type ReactNode } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/modules/auth/AuthProvider';
 import { useCurrentUser } from '@/modules/user/user.hooks';
+import type { CurrentUserResponse } from '@/modules/user/user.types';
 import { getSafeRedirectPath } from '@/shared/lib/safeRedirect';
 
 export interface AuthUserLike {
   mustChangePassword?: boolean;
+}
+
+export type OnboardingContextLike = CurrentUserResponse['data'];
+
+/**
+ * Pure decision function for onboarding redirect:
+ * - OWNER, no restaurant: /onboarding/restaurant
+ * - OWNER or ADMIN, restaurant exists, 0 branches: /onboarding/branch
+ * - ADMIN, no restaurant: /onboarding/pending
+ * - MANAGER/WAITER/CASHIER/CHEF, no restaurant OR 0 branches: /onboarding/pending
+ * - everything else: null
+ *
+ * Loop safe: if already on the target path, returns null.
+ */
+export function getOnboardingRedirect(
+  me: OnboardingContextLike | null | undefined,
+  pathname: string,
+): string | null {
+  if (!me || !me.user) return null;
+
+  const role = me.user.role;
+  const hasRestaurant = me.restaurant !== null;
+  const branchCount = Array.isArray(me.branches) ? me.branches.length : 0;
+
+  let target: string | null = null;
+
+  if (role === 'OWNER') {
+    if (!hasRestaurant) {
+      target = '/onboarding/restaurant';
+    } else if (branchCount === 0) {
+      target = '/onboarding/branch';
+    }
+  } else if (role === 'ADMIN') {
+    if (!hasRestaurant) {
+      target = '/onboarding/pending';
+    } else if (branchCount === 0) {
+      target = '/onboarding/branch';
+    }
+  } else {
+    // MANAGER, WAITER, CASHIER, CHEF (or any other non-admin staff)
+    if (!hasRestaurant || branchCount === 0) {
+      target = '/onboarding/pending';
+    }
+  }
+
+  if (!target) return null;
+
+  if (pathname === target) {
+    return null;
+  }
+
+  return target;
 }
 
 /**
@@ -42,7 +95,11 @@ export interface AppAuthGuardProps {
 
 /**
  * AppAuthGuard protects application routes by determining where a user belongs.
- * Handles silent auth initialization, unauthenticated redirects, and forced password changes.
+ * Order of checks:
+ * 1. no session -> login
+ * 2. mustChangePassword -> /change-password
+ * 3. onboarding -> restaurant step / branch step / pending
+ * 4. render children
  */
 export function AppAuthGuard({ children, fallback = null }: AppAuthGuardProps) {
   const { isInitialized, isAuthenticated } = useAuth();
@@ -50,7 +107,8 @@ export function AppAuthGuard({ children, fallback = null }: AppAuthGuardProps) {
   const pathname = usePathname();
 
   const { data: meData, isLoading: isMeLoading } = useCurrentUser();
-  const me = meData?.data?.user;
+  const meContext = meData?.data;
+  const me = meContext?.user;
 
   useEffect(() => {
     if (!isInitialized) return;
@@ -63,20 +121,31 @@ export function AppAuthGuard({ children, fallback = null }: AppAuthGuardProps) {
       return;
     }
 
-    if (!isMeLoading && me) {
-      const redirectUrl = getAuthRedirect(me, pathname);
-      if (redirectUrl) {
-        router.push(redirectUrl);
+    if (!isMeLoading && meContext && me) {
+      const authRedirect = getAuthRedirect(me, pathname);
+      if (authRedirect) {
+        router.push(authRedirect);
+        return;
+      }
+
+      const onboardingRedirect = getOnboardingRedirect(meContext, pathname);
+      if (onboardingRedirect) {
+        router.push(onboardingRedirect);
       }
     }
-  }, [isInitialized, isAuthenticated, isMeLoading, me, router, pathname]);
+  }, [isInitialized, isAuthenticated, isMeLoading, meContext, me, router, pathname]);
 
-  if (!isInitialized || !isAuthenticated || isMeLoading || !me) {
+  if (!isInitialized || !isAuthenticated || isMeLoading || !meContext || !me) {
     return <>{fallback}</>;
   }
 
-  const redirectUrl = getAuthRedirect(me, pathname);
-  if (redirectUrl) {
+  const authRedirect = getAuthRedirect(me, pathname);
+  if (authRedirect) {
+    return <>{fallback}</>;
+  }
+
+  const onboardingRedirect = getOnboardingRedirect(meContext, pathname);
+  if (onboardingRedirect) {
     return <>{fallback}</>;
   }
 
