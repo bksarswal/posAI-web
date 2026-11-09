@@ -1,6 +1,11 @@
 import { describe, it, expect, expectTypeOf } from 'vitest';
 import type { z } from 'zod';
-import { createStaffSchema, updateStaffSchema, updateProfileSchema } from './user.schema';
+import {
+  createStaffSchema,
+  updateStaffSchema,
+  updateProfileSchema,
+  profileFormSchema,
+} from './user.schema';
 
 describe('User & Staff Schemas (src/modules/user/user.schema.ts)', () => {
   it('createStaffSchema rejects OWNER role at both compile-time and runtime', () => {
@@ -94,5 +99,25 @@ describe('User & Staff Schemas (src/modules/user/user.schema.ts)', () => {
     });
     expect(parsed.name).toBe('Updated Name');
     expect(parsed.phone).toBe('+919876543210');
+  });
+
+  it('profileFormSchema enforces required name and valid optional phone', () => {
+    // Missing name -> fails
+    expect(() => profileFormSchema.parse({})).toThrow();
+
+    // Short name -> fails
+    expect(() => profileFormSchema.parse({ name: 'A' })).toThrow();
+
+    // Valid name only
+    const valid = profileFormSchema.parse({ name: 'Valid User' });
+    expect(valid.name).toBe('Valid User');
+    expect(valid.phone).toBeUndefined();
+
+    // Valid name + valid phone
+    const validWithPhone = profileFormSchema.parse({
+      name: 'Valid User',
+      phone: '9876543210',
+    });
+    expect(validWithPhone.phone).toBe('+919876543210');
   });
 });

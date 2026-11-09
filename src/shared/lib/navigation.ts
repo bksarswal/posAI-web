@@ -52,7 +52,7 @@ export const NAV_CONFIG: NavItemConfig[] = [
     href: '/profile',
     icon: 'User',
     roles: ALL_ROLES,
-    ready: false,
+    ready: true,
   },
 ];
 

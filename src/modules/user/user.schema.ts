@@ -100,3 +100,22 @@ export const updateProfileSchema = z
 
 export type UpdateProfileInput = z.input<typeof updateProfileSchema>;
 export type UpdateProfileOutput = z.output<typeof updateProfileSchema>;
+
+/**
+ * Profile form schema (for editing own profile on UI):
+ * - Name is required (min 2, max 100 characters).
+ * - Phone is optional Indian phone number.
+ */
+export const profileFormSchema = z
+  .object({
+    name: z
+      .string()
+      .trim()
+      .min(2, 'Name must be between 2 and 100 characters')
+      .max(100, 'Name must be between 2 and 100 characters'),
+    phone: emptyToUndefined(indianPhoneSchema),
+  })
+  .strict();
+
+export type ProfileFormInput = z.input<typeof profileFormSchema>;
+export type ProfileFormOutput = z.output<typeof profileFormSchema>;

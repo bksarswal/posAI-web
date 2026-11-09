@@ -11,7 +11,12 @@ import type {
 } from '@/modules/auth';
 import type { createRestaurantSchema, updateRestaurantSchema } from '@/modules/restaurant';
 import type { createBranchSchema, updateBranchSchema } from '@/modules/branch';
-import type { createStaffSchema, updateStaffSchema, updateProfileSchema } from '@/modules/user';
+import type {
+  createStaffSchema,
+  updateStaffSchema,
+  updateProfileSchema,
+  UpdateProfileApiBody,
+} from '@/modules/user';
 
 type JsonBody<T> = T extends { requestBody?: { content: { 'application/json': infer B } } }
   ? B
@@ -64,5 +69,6 @@ describe('Type Drift Guard: Schema output types match generated OpenAPI request 
     expectTypeOf<z.output<typeof createStaffSchema>>().toMatchTypeOf<CreateStaffApiBody>();
     expectTypeOf<z.output<typeof updateStaffSchema>>().toMatchTypeOf<UpdateStaffApiBody>();
     expectTypeOf<z.output<typeof updateProfileSchema>>().toMatchTypeOf<UpdateMeApiBody>();
+    expectTypeOf<UpdateProfileApiBody>().toMatchTypeOf<UpdateMeApiBody>();
   });
 });

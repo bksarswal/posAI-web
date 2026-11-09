@@ -1,10 +1,14 @@
 'use client';
 
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '@/modules/auth/AuthProvider';
 import type { ApiError } from '@/shared/lib/axios';
-import { getMe } from './user.api';
-import type { CurrentUserResponse } from './user.types';
+import { getMe, updateProfile } from './user.api';
+import type {
+  CurrentUserResponse,
+  UpdateProfileApiBody,
+  UpdateProfileResponse,
+} from './user.types';
 
 export const USER_QUERY_KEYS = {
   me: ['users', 'me'] as const,
@@ -17,5 +21,16 @@ export function useCurrentUser() {
     queryKey: USER_QUERY_KEYS.me,
     queryFn: getMe,
     enabled: isAuthenticated,
+  });
+}
+
+export function useUpdateProfile() {
+  const queryClient = useQueryClient();
+
+  return useMutation<UpdateProfileResponse, ApiError, UpdateProfileApiBody>({
+    mutationFn: (payload) => updateProfile(payload),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: USER_QUERY_KEYS.me });
+    },
   });
 }

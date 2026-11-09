@@ -779,6 +779,7 @@ export interface paths {
                                     name: string;
                                     /** Format: email */
                                     email: string;
+                                    phone?: string;
                                     /** @enum {string} */
                                     role: "OWNER" | "ADMIN" | "MANAGER" | "WAITER" | "CASHIER" | "CHEF";
                                     branchIds: string[];

@@ -1,15 +1,7 @@
-import type { UserRole } from '@/shared/types/api';
+import type { paths } from '@/shared/types/api';
 
-export interface UserProfile {
-  id: string;
-  tenantId: string;
-  name: string;
-  email: string;
-  role: UserRole;
-  branchIds: string[];
-  emailVerified: boolean;
-  mustChangePassword: boolean;
-}
+export type UserProfile =
+  paths['/api/v1/users/me']['get']['responses'][200]['content']['application/json']['data']['user'];
 
 export interface TenantInfo {
   id: string;
@@ -70,3 +62,10 @@ export interface CurrentUserResponse {
     branches: BranchInfo[];
   };
 }
+
+export type UpdateProfileApiBody = NonNullable<
+  paths['/api/v1/users/me']['patch']['requestBody']
+>['content']['application/json'];
+
+export type UpdateProfileResponse =
+  paths['/api/v1/users/me']['patch']['responses'][200]['content']['application/json'];

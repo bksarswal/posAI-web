@@ -8,8 +8,8 @@ describe('Navigation (src/shared/lib/navigation.ts)', () => {
     // When includeNotReady: false (default behavior)
     for (const role of allRoles) {
       const items = getNavItems(role, { includeNotReady: false });
-      // Only Dashboard is ready: true right now
-      expect(items.map((i) => i.key)).toEqual(['dashboard']);
+      // Dashboard and Profile are ready: true
+      expect(items.map((i) => i.key)).toEqual(['dashboard', 'profile']);
     }
 
     // When includeNotReady: true (full matrix)
@@ -35,6 +35,15 @@ describe('Navigation (src/shared/lib/navigation.ts)', () => {
       for (const item of defaultItems) {
         expect(item.ready).toBe(true);
       }
+    }
+  });
+
+  it('navigation: every role sees Profile by default', () => {
+    for (const role of allRoles) {
+      const defaultItems = getNavItems(role);
+      const keys = defaultItems.map((i) => i.key);
+      expect(keys).toContain('profile');
+      expect(keys).toEqual(['dashboard', 'profile']);
     }
   });
 
