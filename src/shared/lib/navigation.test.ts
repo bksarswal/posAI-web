@@ -8,8 +8,11 @@ describe('Navigation (src/shared/lib/navigation.ts)', () => {
     // When includeNotReady: false (default behavior)
     for (const role of allRoles) {
       const items = getNavItems(role, { includeNotReady: false });
-      // Dashboard and Profile are ready: true
-      expect(items.map((i) => i.key)).toEqual(['dashboard', 'profile']);
+      if (role === 'OWNER' || role === 'ADMIN') {
+        expect(items.map((i) => i.key)).toEqual(['dashboard', 'branches', 'restaurant', 'profile']);
+      } else {
+        expect(items.map((i) => i.key)).toEqual(['dashboard', 'branches', 'profile']);
+      }
     }
 
     // When includeNotReady: true (full matrix)
@@ -38,12 +41,29 @@ describe('Navigation (src/shared/lib/navigation.ts)', () => {
     }
   });
 
+  it('navigation: every role sees Branches by default', () => {
+    for (const role of allRoles) {
+      const defaultItems = getNavItems(role);
+      const keys = defaultItems.map((i) => i.key);
+      expect(keys).toContain('branches');
+    }
+  });
+
   it('navigation: every role sees Profile by default', () => {
     for (const role of allRoles) {
       const defaultItems = getNavItems(role);
       const keys = defaultItems.map((i) => i.key);
       expect(keys).toContain('profile');
-      expect(keys).toEqual(['dashboard', 'profile']);
+    }
+  });
+
+  it('navigation: only OWNER and ADMIN see Restaurant', () => {
+    expect(getNavItems('OWNER').map((i) => i.key)).toContain('restaurant');
+    expect(getNavItems('ADMIN').map((i) => i.key)).toContain('restaurant');
+
+    const nonAdminRoles: UserRole[] = ['MANAGER', 'WAITER', 'CASHIER', 'CHEF'];
+    for (const role of nonAdminRoles) {
+      expect(getNavItems(role).map((i) => i.key)).not.toContain('restaurant');
     }
   });
 

@@ -9,8 +9,18 @@ import type {
   resetPasswordApiSchema,
   changePasswordSchema,
 } from '@/modules/auth';
-import type { createRestaurantSchema, updateRestaurantSchema } from '@/modules/restaurant';
+import type {
+  createRestaurantSchema,
+  updateRestaurantSchema,
+  UpdateRestaurantApiBody,
+  RestaurantSettingsPayload,
+  buildUpdateRestaurantPayload,
+} from '@/modules/restaurant';
 import type { createBranchSchema, updateBranchSchema } from '@/modules/branch';
+import type {
+  BranchUpdatePayload,
+  buildUpdateBranchPayload,
+} from '@/modules/branch/branch.payloadBuilder';
 import type {
   createStaffSchema,
   updateStaffSchema,
@@ -43,22 +53,27 @@ describe('Type Drift Guard: Schema output types match generated OpenAPI request 
 
   it('Restaurant schemas match OpenAPI request specifications', () => {
     type CreateRestaurantApiBody = JsonBody<paths['/api/v1/restaurant']['post']>;
-    type UpdateRestaurantApiBody = JsonBody<paths['/api/v1/restaurant']['patch']>;
+    type PatchRestaurantApiBody = JsonBody<paths['/api/v1/restaurant']['patch']>;
 
     expectTypeOf<
       z.output<typeof createRestaurantSchema>
     >().toMatchTypeOf<CreateRestaurantApiBody>();
+    expectTypeOf<z.output<typeof updateRestaurantSchema>>().toMatchTypeOf<PatchRestaurantApiBody>();
+    expectTypeOf<UpdateRestaurantApiBody>().toMatchTypeOf<PatchRestaurantApiBody>();
+    expectTypeOf<RestaurantSettingsPayload>().toMatchTypeOf<UpdateRestaurantApiBody>();
     expectTypeOf<
-      z.output<typeof updateRestaurantSchema>
+      ReturnType<typeof buildUpdateRestaurantPayload>
     >().toMatchTypeOf<UpdateRestaurantApiBody>();
   });
 
   it('Branch schemas match OpenAPI request specifications', () => {
     type CreateBranchApiBody = JsonBody<paths['/api/v1/branches']['post']>;
-    type UpdateBranchApiBody = JsonBody<paths['/api/v1/branches/{id}']['patch']>;
+    type PatchBranchApiBody = JsonBody<paths['/api/v1/branches/{id}']['patch']>;
 
     expectTypeOf<z.output<typeof createBranchSchema>>().toMatchTypeOf<CreateBranchApiBody>();
-    expectTypeOf<z.output<typeof updateBranchSchema>>().toMatchTypeOf<UpdateBranchApiBody>();
+    expectTypeOf<z.output<typeof updateBranchSchema>>().toMatchTypeOf<PatchBranchApiBody>();
+    expectTypeOf<BranchUpdatePayload>().toMatchTypeOf<PatchBranchApiBody>();
+    expectTypeOf<ReturnType<typeof buildUpdateBranchPayload>>().toMatchTypeOf<PatchBranchApiBody>();
   });
 
   it('User and Staff schemas match OpenAPI request specifications', () => {

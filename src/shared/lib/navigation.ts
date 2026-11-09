@@ -28,7 +28,7 @@ export const NAV_CONFIG: NavItemConfig[] = [
     href: '/branches',
     icon: 'GitBranch',
     roles: ALL_ROLES,
-    ready: false,
+    ready: true,
   },
   {
     key: 'restaurant',
@@ -36,7 +36,7 @@ export const NAV_CONFIG: NavItemConfig[] = [
     href: '/restaurant',
     icon: 'Store',
     roles: ['OWNER', 'ADMIN'],
-    ready: false,
+    ready: true,
   },
   {
     key: 'staff',

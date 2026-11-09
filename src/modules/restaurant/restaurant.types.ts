@@ -7,5 +7,12 @@ export type CreateRestaurantApiBody = NonNullable<
 export type CreateRestaurantResponse =
   paths['/api/v1/restaurant']['post']['responses'][201]['content']['application/json'];
 
+export type UpdateRestaurantApiBody = NonNullable<
+  paths['/api/v1/restaurant']['patch']['requestBody']
+>['content']['application/json'];
+
+export type UpdateRestaurantResponse =
+  paths['/api/v1/restaurant']['patch']['responses'][200]['content']['application/json'];
+
 export type Restaurant =
   paths['/api/v1/restaurant']['get']['responses'][200]['content']['application/json']['data']['restaurant'];
