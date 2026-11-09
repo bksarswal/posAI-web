@@ -117,12 +117,9 @@ export function BranchForm() {
       // BRANCH_CREATION_CONFLICT -> refetch me; if a branch exists, go on, else show a retry message
       if (parsed.code === ERROR_CODES.BRANCH_CREATION_CONFLICT) {
         await queryClient.invalidateQueries({ queryKey: ['users', 'me'] });
-        const refetchResult = await queryClient.refetchQueries({ queryKey: ['users', 'me'] });
-        const refreshedData = refetchResult[0] as CurrentUserResponse | undefined;
-        const branchCount =
-          refreshedData?.data?.branches?.length ??
-          queryClient.getQueryData<CurrentUserResponse>(['users', 'me'])?.data?.branches?.length ??
-          0;
+        await queryClient.refetchQueries({ queryKey: ['users', 'me'] });
+        const latestData = queryClient.getQueryData<CurrentUserResponse>(['users', 'me']);
+        const branchCount = latestData?.data?.branches?.length ?? 0;
 
         if (branchCount > 0) {
           router.push('/dashboard');

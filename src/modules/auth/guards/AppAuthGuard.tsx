@@ -29,6 +29,11 @@ export function getOnboardingRedirect(
 ): string | null {
   if (!me || !me.user) return null;
 
+  // Change password takes precedence before onboarding
+  if (pathname === '/change-password' || me.user.mustChangePassword) {
+    return null;
+  }
+
   const role = me.user.role;
   const hasRestaurant = me.restaurant !== null;
   const branchCount = Array.isArray(me.branches) ? me.branches.length : 0;

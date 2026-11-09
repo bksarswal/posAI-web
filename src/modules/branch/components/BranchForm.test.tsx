@@ -162,9 +162,9 @@ describe('BranchForm (src/modules/branch/components/BranchForm.tsx)', () => {
       },
     });
 
-    // Mock refetchQueries to return updated me with a branch
-    vi.spyOn(queryClient, 'refetchQueries').mockResolvedValueOnce([
-      {
+    // Mock refetchQueries to populate query cache with a branch
+    vi.spyOn(queryClient, 'refetchQueries').mockImplementationOnce(async () => {
+      queryClient.setQueryData(['users', 'me'], {
         success: true,
         message: 'OK',
         data: {
@@ -216,8 +216,8 @@ describe('BranchForm (src/modules/branch/components/BranchForm.tsx)', () => {
             },
           ],
         },
-      },
-    ]);
+      });
+    });
 
     renderForm();
 
@@ -255,9 +255,9 @@ describe('BranchForm (src/modules/branch/components/BranchForm.tsx)', () => {
       },
     });
 
-    // Mock refetchQueries to return me with 0 branches
-    vi.spyOn(queryClient, 'refetchQueries').mockResolvedValueOnce([
-      {
+    // Mock refetchQueries to populate query cache with 0 branches
+    vi.spyOn(queryClient, 'refetchQueries').mockImplementationOnce(async () => {
+      queryClient.setQueryData(['users', 'me'], {
         success: true,
         message: 'OK',
         data: {
@@ -289,8 +289,8 @@ describe('BranchForm (src/modules/branch/components/BranchForm.tsx)', () => {
           },
           branches: [],
         },
-      },
-    ]);
+      });
+    });
 
     renderForm();
 

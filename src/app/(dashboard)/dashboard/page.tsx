@@ -1,6 +1,6 @@
 'use client';
 
-import { LogOut, RefreshCw, Store, UserCheck } from 'lucide-react';
+import { Building2, GitBranch, RefreshCw, Store, UserCheck } from 'lucide-react';
 import { Button } from '@/shared/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/shared/ui/card';
 import { Skeleton } from '@/shared/ui/skeleton';
@@ -16,7 +16,7 @@ export default function DashboardPage() {
   // Loading skeleton while initial session restores or user profile is loading
   if (!isInitialized || isLoading) {
     return (
-      <div className="space-y-6 max-w-4xl mx-auto">
+      <div className="space-y-6 max-w-5xl mx-auto">
         <Card className="border-slate-200">
           <CardHeader className="space-y-2">
             <Skeleton className="h-8 w-64" />
@@ -24,9 +24,7 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent className="space-y-4">
             <Skeleton className="h-24 w-full" />
-            <div className="flex justify-end">
-              <Skeleton className="h-10 w-28" />
-            </div>
+            <Skeleton className="h-32 w-full" />
           </CardContent>
         </Card>
       </div>
@@ -66,56 +64,102 @@ export default function DashboardPage() {
     );
   }
 
-  const { user, restaurant, tenant } = data.data;
+  const { user, restaurant, tenant, branches = [] } = data.data;
 
   return (
-    <div className="space-y-6 max-w-4xl mx-auto">
-      <Card className="border-slate-200 shadow-sm">
-        <CardHeader className="flex flex-row items-start justify-between pb-4">
-          <div>
-            <div className="inline-flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700 mb-2">
-              <UserCheck className="h-3.5 w-3.5" />
-              {user.role}
+    <div className="space-y-6 max-w-5xl mx-auto">
+      {/* Header Greeting & Role Badge */}
+      <Card className="border-slate-200 shadow-xs">
+        <CardHeader className="pb-4">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div>
+              <div className="inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-semibold text-blue-700 mb-2">
+                <UserCheck className="h-3.5 w-3.5" />
+                {user.role}
+              </div>
+              <CardTitle className="text-2xl font-bold tracking-tight text-slate-900">
+                Welcome, {user.name} ({user.role})
+              </CardTitle>
+              <CardDescription className="text-sm text-slate-600 mt-1">
+                Organization: <span className="font-medium text-slate-800">{tenant.name}</span>
+              </CardDescription>
             </div>
-            <CardTitle className="text-2xl font-bold tracking-tight text-slate-900">
-              Welcome, {user.name} ({user.role})
-            </CardTitle>
-            <CardDescription className="text-base text-slate-600">
-              Organization: <span className="font-medium text-slate-800">{tenant.name}</span>
-            </CardDescription>
-          </div>
 
-          <Button
-            variant="outline"
-            onClick={() => logoutMutation.mutate()}
-            disabled={logoutMutation.isPending}
-            className="border-slate-300 text-slate-700 hover:bg-slate-100"
-          >
-            <LogOut className="mr-2 h-4 w-4" />
-            {logoutMutation.isPending ? 'Logging out...' : 'Log out'}
-          </Button>
+            {restaurant && (
+              <div className="flex items-center gap-2.5 rounded-lg border border-slate-200 bg-slate-50/70 px-3.5 py-2">
+                <Store className="h-5 w-5 text-blue-600" />
+                <div>
+                  <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                    Restaurant
+                  </p>
+                  <p className="text-sm font-bold text-slate-900">{restaurant.name}</p>
+                </div>
+              </div>
+            )}
+          </div>
         </CardHeader>
-
-        <CardContent className="space-y-4">
-          <div className="rounded-lg border border-slate-200 bg-slate-50/50 p-4">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-100 text-blue-700">
-                <Store className="h-5 w-5" />
-              </div>
-              <div>
-                <h4 className="text-sm font-semibold text-slate-900">
-                  {restaurant ? restaurant.name : 'No restaurant profile created yet'}
-                </h4>
-                <p className="text-xs text-slate-500">
-                  {restaurant
-                    ? `${restaurant.address.city}, ${restaurant.address.state}`
-                    : 'Complete onboarding to set up your restaurant and branches.'}
-                </p>
-              </div>
-            </div>
-          </div>
-        </CardContent>
       </Card>
+
+      {/* Accessible Branches Section */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Building2 className="h-5 w-5 text-slate-700" />
+            <h2 className="text-lg font-bold text-slate-900">Accessible Branches</h2>
+          </div>
+          <span className="text-xs font-medium text-slate-500">
+            {branches.length} {branches.length === 1 ? 'branch' : 'branches'} available
+          </span>
+        </div>
+
+        {branches.length === 0 ? (
+          <Card className="border-dashed border-slate-300 bg-white text-center p-8">
+            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-slate-500 mb-3">
+              <GitBranch className="h-6 w-6" />
+            </div>
+            <h3 className="text-base font-semibold text-slate-900">No branches accessible</h3>
+            <p className="text-sm text-slate-500 mt-1 max-w-sm mx-auto">
+              You are currently not assigned to any branches in this restaurant. Ask your
+              administrator to assign you.
+            </p>
+          </Card>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {branches.map((branch) => (
+              <Card
+                key={branch.id}
+                className="border-slate-200 shadow-xs hover:border-slate-300 transition-all flex flex-col justify-between"
+              >
+                <CardHeader className="pb-3">
+                  <div className="flex items-start justify-between gap-2">
+                    <CardTitle className="text-base font-bold text-slate-900 leading-snug">
+                      {branch.name}
+                    </CardTitle>
+                    {branch.isMain && (
+                      <span className="shrink-0 rounded-md bg-blue-100 px-2 py-0.5 text-xs font-bold text-blue-700">
+                        Main
+                      </span>
+                    )}
+                  </div>
+                  <CardDescription className="text-xs text-slate-500 font-mono pt-1">
+                    Code: <span className="font-semibold text-slate-700">{branch.code}</span>
+                  </CardDescription>
+                </CardHeader>
+
+                <CardContent className="pt-0 text-xs text-slate-600 space-y-1 border-t border-slate-100 mt-2 py-3 bg-slate-50/50 rounded-b-xl">
+                  <p className="truncate">
+                    {branch.address.city}, {branch.address.state} ({branch.address.pincode})
+                  </p>
+                  <div className="flex items-center justify-between text-slate-500 pt-1">
+                    <span>Status: {branch.status}</span>
+                    <span>{branch.currency}</span>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

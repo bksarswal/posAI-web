@@ -42,7 +42,7 @@ export const createRestaurantSchema = z
   })
   .strict();
 
-export type CreateRestaurantInput = z.input<typeof createRestaurantSchema>;
+export type CreateRestaurantFormInput = z.input<typeof createRestaurantSchema>;
 export type CreateRestaurantOutput = z.output<typeof createRestaurantSchema>;
 
 export const updateRestaurantSchema = z

@@ -1,9 +1,11 @@
+import type { UserRole } from '@/shared/types/api';
+
 export interface UserProfile {
   id: string;
   tenantId: string;
   name: string;
   email: string;
-  role: 'OWNER' | 'ADMIN' | 'MANAGER' | 'WAITER' | 'CASHIER' | 'CHEF';
+  role: UserRole;
   branchIds: string[];
   emailVerified: boolean;
   mustChangePassword: boolean;

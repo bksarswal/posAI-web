@@ -47,3 +47,10 @@ export type ApiResponse<
  */
 export type ApiData<Path extends keyof paths, Method extends keyof paths[Path]> =
   ApiResponse<Path, Method> extends { data: infer Data } ? Data : ApiResponse<Path, Method>;
+
+/**
+ * Role type derived from the current user endpoint schema.
+ */
+export type UserRole =
+  paths['/api/v1/users/me']['get']['responses'][200]['content']['application/json']['data']['user']['role'];
+export type Role = UserRole;

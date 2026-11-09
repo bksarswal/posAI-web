@@ -20,10 +20,10 @@ import {
 import { useCurrentUser } from '@/modules/user/user.hooks';
 import { useCreateRestaurant } from '../restaurant.hooks';
 import { createRestaurantSchema } from '../restaurant.schema';
-import type { CreateRestaurantInput } from '../restaurant.types';
+import type { CreateRestaurantFormInput } from '../restaurant.schema';
 
 export function RestaurantForm() {
-  const [form] = Form.useForm<CreateRestaurantInput>();
+  const [form] = Form.useForm<CreateRestaurantFormInput>();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -46,7 +46,7 @@ export function RestaurantForm() {
     }
   }, [isMeLoading, user, restaurant, router]);
 
-  const handleSubmit = async (values: CreateRestaurantInput) => {
+  const handleSubmit = async (values: CreateRestaurantFormInput) => {
     setErrorMessage(null);
 
     // Validate with Zod schema to ensure transformations and parsing
