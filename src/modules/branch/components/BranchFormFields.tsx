@@ -25,6 +25,7 @@ export interface BranchFormFieldsProps {
    */
   codeReadOnly?: boolean;
   codeValue?: string;
+  currencyValue?: string;
   /**
    * Original branch values used for "can't remove" guards in edit mode.
    */
@@ -35,6 +36,7 @@ export interface BranchFormFieldsProps {
 export function BranchFormFields({
   codeReadOnly = false,
   codeValue,
+  currencyValue,
   originalValues,
   isSettings = false,
 }: BranchFormFieldsProps) {
@@ -159,16 +161,29 @@ export function BranchFormFields({
           />
         </Form.Item>
 
-        <Form.Item
-          name="currency"
-          label={<span className="text-sm font-medium text-slate-700">Currency</span>}
-          className="mb-0"
-        >
-          <Input
-            disabled
-            className="h-11 rounded-lg border-slate-300 bg-slate-50 text-slate-600 text-base"
-          />
-        </Form.Item>
+        {currencyValue !== undefined ? (
+          <Form.Item
+            label={<span className="text-sm font-medium text-slate-700">Currency</span>}
+            className="mb-0"
+          >
+            <Input
+              value={currencyValue}
+              disabled
+              className="h-11 rounded-lg border-slate-300 bg-slate-50 text-slate-600 text-base"
+            />
+          </Form.Item>
+        ) : (
+          <Form.Item
+            name="currency"
+            label={<span className="text-sm font-medium text-slate-700">Currency</span>}
+            className="mb-0"
+          >
+            <Input
+              disabled
+              className="h-11 rounded-lg border-slate-300 bg-slate-50 text-slate-600 text-base"
+            />
+          </Form.Item>
+        )}
       </div>
 
       {/* Address Section */}

@@ -328,4 +328,41 @@ describe('BranchEditForm (src/modules/branch/components/BranchEditForm.tsx)', ()
       '/branches',
     );
   });
+
+  it('regression: renders the form normally when the query succeeds (error === null)', () => {
+    vi.spyOn(branchHooks, 'useBranch').mockReturnValue({
+      data: makeBranchResponse(baseBranch),
+      isLoading: false,
+      error: null,
+    } as unknown as ReturnType<typeof branchHooks.useBranch>);
+    vi.spyOn(branchHooks, 'useUpdateBranch').mockReturnValue({
+      mutateAsync: vi.fn(),
+      isPending: false,
+    } as unknown as ReturnType<typeof branchHooks.useUpdateBranch>);
+
+    renderForm('b1');
+
+    expect(screen.getByText('Edit Branch')).toBeInTheDocument();
+    expect(screen.getByDisplayValue('Main Branch')).toBeInTheDocument();
+    expect(screen.getByDisplayValue('MAIN-01')).toBeInTheDocument();
+    expect(screen.getByDisplayValue('INR')).toBeInTheDocument();
+    expect(screen.queryByText(/branch not found/i)).not.toBeInTheDocument();
+  });
+
+  it("edit: read-only currency shows the branch's currency", () => {
+    vi.spyOn(branchHooks, 'useBranch').mockReturnValue({
+      data: makeBranchResponse(baseBranch),
+      isLoading: false,
+      error: null,
+    } as unknown as ReturnType<typeof branchHooks.useBranch>);
+    vi.spyOn(branchHooks, 'useUpdateBranch').mockReturnValue({
+      mutateAsync: vi.fn(),
+      isPending: false,
+    } as unknown as ReturnType<typeof branchHooks.useUpdateBranch>);
+
+    renderForm('b1');
+
+    const currencyInput = screen.getByDisplayValue('INR');
+    expect(currencyInput).toBeDisabled();
+  });
 });

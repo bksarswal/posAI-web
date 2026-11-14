@@ -16,6 +16,13 @@ import type { CreateBranchApiBody } from '../branch.types';
 import { useCreateBranch, BRANCH_QUERY_KEYS } from '../branch.hooks';
 import { BranchFormFields, type BranchFieldValues } from './BranchFormFields';
 
+const ADDRESS_FIELDS = ['line1', 'line2', 'city', 'state', 'pincode'] as const;
+type AddressField = (typeof ADDRESS_FIELDS)[number];
+
+function isAddressField(v: unknown): v is AddressField {
+  return (ADDRESS_FIELDS as readonly unknown[]).includes(v);
+}
+
 export function BranchCreateForm() {
   const [form] = Form.useForm<BranchFieldValues>();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -35,6 +42,8 @@ export function BranchCreateForm() {
 
     if (!parsedResult.success) {
       const fieldErrors: Parameters<typeof form.setFields>[0] = [];
+      const generalErrors: string[] = [];
+
       for (const issue of parsedResult.error.issues) {
         const p0 = issue.path[0];
         const p1 = issue.path[1];
@@ -43,14 +52,22 @@ export function BranchCreateForm() {
             name: [p0],
             errors: [issue.message],
           });
-        } else if (p0 === 'address' && typeof p1 === 'string') {
+        } else if (p0 === 'address' && isAddressField(p1)) {
           fieldErrors.push({
             name: ['address', p1],
             errors: [issue.message],
           });
+        } else {
+          generalErrors.push(issue.message);
         }
       }
-      form.setFields(fieldErrors);
+
+      if (fieldErrors.length > 0) {
+        form.setFields(fieldErrors);
+      }
+      if (generalErrors.length > 0) {
+        setErrorMessage(generalErrors.join(', '));
+      }
       return;
     }
 

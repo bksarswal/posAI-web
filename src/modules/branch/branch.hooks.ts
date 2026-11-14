@@ -32,7 +32,8 @@ export function useBranch(id: string) {
     enabled: Boolean(id),
     retry: (failureCount, error) => {
       // Do not retry on 404
-      if (parseApiError(error).status === 404) return false;
+      const status = error ? parseApiError(error).status : undefined;
+      if (status === 404) return false;
       return failureCount < 2;
     },
   });

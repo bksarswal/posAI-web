@@ -256,7 +256,8 @@ export function BranchEditForm({ branchId }: BranchEditFormProps) {
   };
 
   // 404 state
-  if (!isLoading && parseApiError(error).status === 404) {
+  const status = error ? parseApiError(error).status : undefined;
+  if (!isLoading && status === 404) {
     return (
       <Card className="border-slate-200 shadow-sm max-w-2xl mx-auto">
         <CardContent className="py-12 text-center space-y-4">
@@ -365,6 +366,7 @@ export function BranchEditForm({ branchId }: BranchEditFormProps) {
           <BranchFormFields
             codeReadOnly={true}
             codeValue={branch.code}
+            currencyValue={branch.currency}
             originalValues={originalValues}
             isSettings={true}
           />
