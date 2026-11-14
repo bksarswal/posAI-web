@@ -1,6 +1,6 @@
 import { describe, it, expectTypeOf } from 'vitest';
 import type { z } from 'zod';
-import type { paths } from '@/shared/types/api';
+import type { paths, UserRole } from '@/shared/types/api';
 import type {
   signupSchema,
   loginSchema,
@@ -27,6 +27,7 @@ import type {
   updateProfileSchema,
   UpdateProfileApiBody,
 } from '@/modules/user';
+import type { StaffItem, StaffRole } from '@/modules/staff';
 
 type JsonBody<T> = T extends { requestBody?: { content: { 'application/json': infer B } } }
   ? B
@@ -85,5 +86,28 @@ describe('Type Drift Guard: Schema output types match generated OpenAPI request 
     expectTypeOf<z.output<typeof updateStaffSchema>>().toMatchTypeOf<UpdateStaffApiBody>();
     expectTypeOf<z.output<typeof updateProfileSchema>>().toMatchTypeOf<UpdateMeApiBody>();
     expectTypeOf<UpdateProfileApiBody>().toMatchTypeOf<UpdateMeApiBody>();
+
+    // StaffItem shape guard: build a typed fixture with every field the API
+    // defines and assert it satisfies StaffItem. If the backend adds a new
+    // required field or changes the role enum, this call-site breaks typecheck.
+    const staffFixture: StaffItem = {
+      id: 'u1',
+      tenantId: 't1',
+      name: 'John Doe',
+      email: 'john@example.com',
+      phone: '+919876543210', // optional field — included to verify it is accepted
+      role: 'WAITER',
+      branchIds: ['b1'],
+      status: 'ACTIVE',
+      emailVerified: true,
+      mustChangePassword: false,
+      createdAt: '2026-01-01T00:00:00.000Z',
+      updatedAt: '2026-01-01T00:00:00.000Z',
+    };
+    expectTypeOf(staffFixture).toMatchTypeOf<StaffItem>();
+
+    // role enum guard: StaffRole must equal UserRole; a backend enum change
+    // on either side (e.g. adding 'OWNER' or removing 'CHEF') breaks typecheck.
+    expectTypeOf<StaffRole>().toEqualTypeOf<UserRole>();
   });
 });

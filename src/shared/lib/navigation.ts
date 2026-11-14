@@ -44,7 +44,7 @@ export const NAV_CONFIG: NavItemConfig[] = [
     href: '/staff',
     icon: 'Users',
     roles: ['OWNER', 'ADMIN'],
-    ready: false,
+    ready: true,
   },
   {
     key: 'profile',

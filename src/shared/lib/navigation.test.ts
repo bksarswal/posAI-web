@@ -9,7 +9,13 @@ describe('Navigation (src/shared/lib/navigation.ts)', () => {
     for (const role of allRoles) {
       const items = getNavItems(role, { includeNotReady: false });
       if (role === 'OWNER' || role === 'ADMIN') {
-        expect(items.map((i) => i.key)).toEqual(['dashboard', 'branches', 'restaurant', 'profile']);
+        expect(items.map((i) => i.key)).toEqual([
+          'dashboard',
+          'branches',
+          'restaurant',
+          'staff',
+          'profile',
+        ]);
       } else {
         expect(items.map((i) => i.key)).toEqual(['dashboard', 'branches', 'profile']);
       }
@@ -64,6 +70,16 @@ describe('Navigation (src/shared/lib/navigation.ts)', () => {
     const nonAdminRoles: UserRole[] = ['MANAGER', 'WAITER', 'CASHIER', 'CHEF'];
     for (const role of nonAdminRoles) {
       expect(getNavItems(role).map((i) => i.key)).not.toContain('restaurant');
+    }
+  });
+
+  it('navigation: only OWNER and ADMIN see Staff', () => {
+    expect(getNavItems('OWNER').map((i) => i.key)).toContain('staff');
+    expect(getNavItems('ADMIN').map((i) => i.key)).toContain('staff');
+
+    const nonAdminRoles: UserRole[] = ['MANAGER', 'WAITER', 'CASHIER', 'CHEF'];
+    for (const role of nonAdminRoles) {
+      expect(getNavItems(role).map((i) => i.key)).not.toContain('staff');
     }
   });
 
