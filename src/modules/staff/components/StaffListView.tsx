@@ -1,14 +1,17 @@
 'use client';
 
 import { useMemo, useState } from 'react';
+import Link from 'next/link';
 import { Table } from 'antd';
 import type { TableProps } from 'antd';
-import { Users, AlertCircle, RefreshCw } from 'lucide-react';
+import { Users, AlertCircle, RefreshCw, Plus } from 'lucide-react';
 import { Button } from '@/shared/ui/button';
 import { Alert, AlertDescription, AlertTitle } from '@/shared/ui/alert';
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/ui/card';
 import { useCurrentUser } from '@/modules/user/user.hooks';
+import type { UserRole } from '@/shared/lib/navigation';
 import { useStaff } from '../staff.hooks';
+import { canManageStaff } from '../staff.permissions';
 import type { StaffItem } from '../staff.types';
 
 // The API's default limit is 20, max is 100.
@@ -24,6 +27,9 @@ export function StaffListView() {
 
   const items = staffData?.data?.items ?? [];
   const total = staffData?.data?.total ?? 0;
+
+  const role = meData?.data?.user?.role as UserRole | undefined;
+  const canManage = role ? canManageStaff(role) : false;
 
   const branchMap = useMemo(() => {
     const map = new Map<string, string>();
@@ -132,6 +138,14 @@ export function StaffListView() {
             Manage your restaurant staff and permissions
           </p>
         </div>
+        {canManage && (
+          <Link href="/staff/new">
+            <Button className="gap-2">
+              <Plus className="h-4 w-4" />
+              New Staff
+            </Button>
+          </Link>
+        )}
       </div>
 
       {error && (

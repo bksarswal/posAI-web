@@ -27,7 +27,12 @@ import type {
   updateProfileSchema,
   UpdateProfileApiBody,
 } from '@/modules/user';
-import type { StaffItem, StaffRole } from '@/modules/staff';
+import {
+  type StaffItem,
+  type StaffRole,
+  type CreateStaffApiBody,
+  type buildCreateStaffPayload,
+} from '@/modules/staff';
 
 type JsonBody<T> = T extends { requestBody?: { content: { 'application/json': infer B } } }
   ? B
@@ -78,11 +83,11 @@ describe('Type Drift Guard: Schema output types match generated OpenAPI request 
   });
 
   it('User and Staff schemas match OpenAPI request specifications', () => {
-    type CreateStaffApiBody = JsonBody<paths['/api/v1/users']['post']>;
+    type CreateStaffOpenApiBody = JsonBody<paths['/api/v1/users']['post']>;
     type UpdateStaffApiBody = JsonBody<paths['/api/v1/users/{id}']['patch']>;
     type UpdateMeApiBody = JsonBody<paths['/api/v1/users/me']['patch']>;
 
-    expectTypeOf<z.output<typeof createStaffSchema>>().toMatchTypeOf<CreateStaffApiBody>();
+    expectTypeOf<z.output<typeof createStaffSchema>>().toMatchTypeOf<CreateStaffOpenApiBody>();
     expectTypeOf<z.output<typeof updateStaffSchema>>().toMatchTypeOf<UpdateStaffApiBody>();
     expectTypeOf<z.output<typeof updateProfileSchema>>().toMatchTypeOf<UpdateMeApiBody>();
     expectTypeOf<UpdateProfileApiBody>().toMatchTypeOf<UpdateMeApiBody>();
@@ -109,5 +114,18 @@ describe('Type Drift Guard: Schema output types match generated OpenAPI request 
     // role enum guard: StaffRole must equal UserRole; a backend enum change
     // on either side (e.g. adding 'OWNER' or removing 'CHEF') breaks typecheck.
     expectTypeOf<StaffRole>().toEqualTypeOf<UserRole>();
+
+    // CreateStaffApiBody shape guard: build a typed fixture with all expected fields
+    // and verify it is assignable to CreateStaffApiBody, which matches OpenAPI create body.
+    const createStaffFixture: CreateStaffApiBody = {
+      name: 'Jane Doe',
+      email: 'jane@example.com',
+      phone: '+919876543210',
+      role: 'WAITER',
+      branchIds: ['b1'],
+    };
+    expectTypeOf(createStaffFixture).toMatchTypeOf<CreateStaffApiBody>();
+    expectTypeOf<CreateStaffApiBody>().toMatchTypeOf<CreateStaffOpenApiBody>();
+    expectTypeOf<ReturnType<typeof buildCreateStaffPayload>>().toMatchTypeOf<CreateStaffApiBody>();
   });
 });

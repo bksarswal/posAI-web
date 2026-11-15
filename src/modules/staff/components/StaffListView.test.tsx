@@ -264,4 +264,45 @@ describe('StaffListView (src/modules/staff/components/StaffListView.tsx)', () =>
     // Should also show the truncation warning note
     expect(screen.getByText(/150 staff members but only the first 100/i)).toBeInTheDocument();
   });
+
+  it('shows "New Staff" button when canManageStaff is true and hides when false', () => {
+    vi.spyOn(staffHooks, 'useStaff').mockReturnValue({
+      data: {
+        success: true,
+        message: 'OK',
+        data: {
+          items: [mockStaffMember],
+          page: 1,
+          limit: 100,
+          total: 1,
+        },
+      },
+      isLoading: false,
+      error: null,
+      refetch: vi.fn(),
+    } as unknown as ReturnType<typeof staffHooks.useStaff>);
+
+    // ADMIN user: can manage staff -> sees New Staff button
+    const { unmount } = renderComponent();
+    expect(screen.getByRole('link', { name: /new staff/i })).toBeInTheDocument();
+    unmount();
+
+    // WAITER user: cannot manage staff -> does NOT see New Staff button
+    vi.spyOn(userHooks, 'useCurrentUser').mockReturnValue({
+      data: {
+        ...mockMeData,
+        data: {
+          ...mockMeData.data,
+          user: {
+            ...mockMeData.data.user,
+            role: 'WAITER',
+          },
+        },
+      },
+      isLoading: false,
+    } as unknown as ReturnType<typeof userHooks.useCurrentUser>);
+
+    renderComponent();
+    expect(screen.queryByRole('link', { name: /new staff/i })).not.toBeInTheDocument();
+  });
 });

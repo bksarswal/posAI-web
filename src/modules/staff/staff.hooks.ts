@@ -1,10 +1,15 @@
 'use client';
 
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { ApiError } from '@/shared/lib/axios';
 import { parseApiError } from '@/shared/lib/apiError';
-import { listStaff } from './staff.api';
-import type { ListStaffResponse, StaffListQuery } from './staff.types';
+import { listStaff, createStaff } from './staff.api';
+import type {
+  ListStaffResponse,
+  StaffListQuery,
+  CreateStaffApiBody,
+  CreateStaffResponse,
+} from './staff.types';
 
 export const STAFF_QUERY_KEYS = {
   all: ['staff'] as const,
@@ -26,6 +31,18 @@ export function useStaff(params?: StaffListQuery) {
         return false;
       }
       return failureCount < 2;
+    },
+  });
+}
+
+export function useCreateStaff() {
+  const queryClient = useQueryClient();
+
+  return useMutation<CreateStaffResponse, ApiError, CreateStaffApiBody>({
+    mutationFn: (data) => createStaff(data),
+    gcTime: 0,
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: STAFF_QUERY_KEYS.all });
     },
   });
 }

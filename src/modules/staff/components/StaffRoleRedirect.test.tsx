@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import StaffPage from '@/app/(dashboard)/staff/page';
+import NewStaffPage from '@/app/(dashboard)/staff/new/page';
 import * as userHooks from '@/modules/user/user.hooks';
 import * as staffHooks from '../staff.hooks';
 
@@ -37,7 +38,7 @@ function makeMeData(role: string) {
   };
 }
 
-function renderWithRole(role: string) {
+function renderWithRole(role: string, ui: React.ReactElement = <StaffPage />) {
   vi.spyOn(userHooks, 'useCurrentUser').mockReturnValue({
     data: makeMeData(role),
     isLoading: false,
@@ -46,11 +47,7 @@ function renderWithRole(role: string) {
   const queryClient = new QueryClient({
     defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
   });
-  return render(
-    <QueryClientProvider client={queryClient}>
-      <StaffPage />
-    </QueryClientProvider>,
-  );
+  return render(<QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>);
 }
 
 describe('/staff redirects non-OWNER/ADMIN', () => {
@@ -90,6 +87,25 @@ describe('/staff redirects non-OWNER/ADMIN', () => {
       const { unmount } = renderWithRole(role);
       expect(mockPush).not.toHaveBeenCalled();
       expect(screen.getByRole('heading', { name: 'Staff' })).toBeInTheDocument();
+      unmount();
+    }
+  });
+
+  it('/staff/new redirects non-OWNER/ADMIN to /dashboard and renders for OWNER/ADMIN', async () => {
+    const nonAllowedRoles = ['WAITER', 'MANAGER', 'CASHIER', 'CHEF'] as const;
+
+    for (const role of nonAllowedRoles) {
+      const { unmount } = renderWithRole(role, <NewStaffPage />);
+      await waitFor(() => expect(mockPush).toHaveBeenCalledWith('/dashboard'));
+      expect(screen.queryByText('New Staff Member')).not.toBeInTheDocument();
+      unmount();
+      mockPush.mockClear();
+    }
+
+    for (const role of ['OWNER', 'ADMIN'] as const) {
+      const { unmount } = renderWithRole(role, <NewStaffPage />);
+      expect(mockPush).not.toHaveBeenCalled();
+      expect(screen.getByText('New Staff Member')).toBeInTheDocument();
       unmount();
     }
   });
