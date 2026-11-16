@@ -15,3 +15,13 @@ export type CreateStaffApiBody = NonNullable<
 
 export type CreateStaffResponse =
   paths['/api/v1/users']['post']['responses'][201]['content']['application/json'];
+
+export type UpdateStaffApiBody = NonNullable<
+  paths['/api/v1/users/{id}']['patch']['requestBody']
+>['content']['application/json'];
+
+export type UpdateStaffResponse =
+  paths['/api/v1/users/{id}']['patch']['responses'][200]['content']['application/json'];
+
+export type ResetStaffPasswordResponse =
+  paths['/api/v1/users/{id}/reset-password']['post']['responses'][200]['content']['application/json'];

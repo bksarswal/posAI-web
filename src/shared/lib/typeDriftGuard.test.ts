@@ -31,7 +31,9 @@ import {
   type StaffItem,
   type StaffRole,
   type CreateStaffApiBody,
+  type UpdateStaffApiBody,
   type buildCreateStaffPayload,
+  type buildUpdateStaffPayload,
 } from '@/modules/staff';
 
 type JsonBody<T> = T extends { requestBody?: { content: { 'application/json': infer B } } }
@@ -84,11 +86,11 @@ describe('Type Drift Guard: Schema output types match generated OpenAPI request 
 
   it('User and Staff schemas match OpenAPI request specifications', () => {
     type CreateStaffOpenApiBody = JsonBody<paths['/api/v1/users']['post']>;
-    type UpdateStaffApiBody = JsonBody<paths['/api/v1/users/{id}']['patch']>;
+    type UpdateStaffOpenApiBody = JsonBody<paths['/api/v1/users/{id}']['patch']>;
     type UpdateMeApiBody = JsonBody<paths['/api/v1/users/me']['patch']>;
 
     expectTypeOf<z.output<typeof createStaffSchema>>().toMatchTypeOf<CreateStaffOpenApiBody>();
-    expectTypeOf<z.output<typeof updateStaffSchema>>().toMatchTypeOf<UpdateStaffApiBody>();
+    expectTypeOf<z.output<typeof updateStaffSchema>>().toMatchTypeOf<UpdateStaffOpenApiBody>();
     expectTypeOf<z.output<typeof updateProfileSchema>>().toMatchTypeOf<UpdateMeApiBody>();
     expectTypeOf<UpdateProfileApiBody>().toMatchTypeOf<UpdateMeApiBody>();
 
@@ -127,5 +129,19 @@ describe('Type Drift Guard: Schema output types match generated OpenAPI request 
     expectTypeOf(createStaffFixture).toMatchTypeOf<CreateStaffApiBody>();
     expectTypeOf<CreateStaffApiBody>().toMatchTypeOf<CreateStaffOpenApiBody>();
     expectTypeOf<ReturnType<typeof buildCreateStaffPayload>>().toMatchTypeOf<CreateStaffApiBody>();
+
+    // UpdateStaffApiBody shape guard: build a typed fixture with all patchable fields
+    // and verify it is assignable to UpdateStaffApiBody (== OpenAPI PATCH body).
+    // A backend field rename or enum change breaks typecheck here.
+    const updateStaffFixture: UpdateStaffApiBody = {
+      name: 'Jane Updated',
+      phone: '+919000000001',
+      role: 'MANAGER',
+      branchIds: ['b1', 'b2'],
+      status: 'INACTIVE',
+    };
+    expectTypeOf(updateStaffFixture).toMatchTypeOf<UpdateStaffApiBody>();
+    expectTypeOf<UpdateStaffApiBody>().toMatchTypeOf<UpdateStaffOpenApiBody>();
+    expectTypeOf<ReturnType<typeof buildUpdateStaffPayload>>().toMatchTypeOf<UpdateStaffApiBody>();
   });
 });

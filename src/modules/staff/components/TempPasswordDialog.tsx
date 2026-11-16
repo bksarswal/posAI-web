@@ -11,6 +11,8 @@ export interface TempPasswordDialogProps {
   open: boolean;
   staffName?: string;
   temporaryPassword?: string;
+  /** Optional description shown below the staff name. Defaults to the creation message. */
+  description?: string;
   onClose: () => void;
 }
 
@@ -18,6 +20,7 @@ export function TempPasswordDialog({
   open,
   staffName,
   temporaryPassword,
+  description,
   onClose,
 }: TempPasswordDialogProps) {
   const [copied, setCopied] = useState(false);
@@ -61,7 +64,8 @@ export function TempPasswordDialog({
       <div className="space-y-4 pt-2">
         <p className="text-sm text-slate-600">
           Staff member {staffName ? <strong className="text-slate-900">{staffName}</strong> : ''}{' '}
-          has been created successfully. Share this temporary password so they can log in.
+          {description ??
+            'has been created successfully. Share this temporary password so they can log in.'}
         </p>
 
         {/* Temporary password display with copy button */}

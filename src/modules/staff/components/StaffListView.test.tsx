@@ -305,4 +305,88 @@ describe('StaffListView (src/modules/staff/components/StaffListView.tsx)', () =>
     renderComponent();
     expect(screen.queryByRole('link', { name: /new staff/i })).not.toBeInTheDocument();
   });
+
+  it('ADMIN actor sees Edit/Deactivate/Reset PW actions for a WAITER target', () => {
+    vi.spyOn(staffHooks, 'useStaff').mockReturnValue({
+      data: {
+        success: true,
+        message: 'OK',
+        data: {
+          // WAITER id=s1; actor is ADMIN id=u1 (different) → all actions allowed
+          items: [mockStaffMember],
+          page: 1,
+          limit: 100,
+          total: 1,
+        },
+      },
+      isLoading: false,
+      error: null,
+      refetch: vi.fn(),
+    } as unknown as ReturnType<typeof staffHooks.useStaff>);
+
+    renderComponent();
+
+    expect(screen.getByRole('button', { name: /edit john doe/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /deactivate john doe/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: /reset password for john doe/i }),
+    ).toBeInTheDocument();
+  });
+
+  it('ADMIN actor does NOT see actions for an ADMIN target (only OWNER can modify ADMINs)', () => {
+    const adminTarget: StaffItem = {
+      ...mockStaffMember,
+      id: 's2',
+      name: 'Other Admin',
+      email: 'other@test.com',
+      role: 'ADMIN',
+    };
+
+    vi.spyOn(staffHooks, 'useStaff').mockReturnValue({
+      data: {
+        success: true,
+        message: 'OK',
+        data: { items: [adminTarget], page: 1, limit: 100, total: 1 },
+      },
+      isLoading: false,
+      error: null,
+      refetch: vi.fn(),
+    } as unknown as ReturnType<typeof staffHooks.useStaff>);
+
+    renderComponent();
+
+    expect(screen.queryByRole('button', { name: /edit other admin/i })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: /deactivate other admin/i }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('no actions rendered for self (actor id === target id)', () => {
+    // The actor (ADMIN, id=u1) is the same as the staff target
+    const selfTarget: StaffItem = {
+      ...mockStaffMember,
+      id: 'u1', // matches mockMeData.data.user.id
+      name: 'Admin User',
+      email: 'admin@test.com',
+      role: 'ADMIN',
+    };
+
+    vi.spyOn(staffHooks, 'useStaff').mockReturnValue({
+      data: {
+        success: true,
+        message: 'OK',
+        data: { items: [selfTarget], page: 1, limit: 100, total: 1 },
+      },
+      isLoading: false,
+      error: null,
+      refetch: vi.fn(),
+    } as unknown as ReturnType<typeof staffHooks.useStaff>);
+
+    renderComponent();
+
+    expect(screen.queryByRole('button', { name: /edit admin user/i })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: /deactivate admin user/i }),
+    ).not.toBeInTheDocument();
+  });
 });

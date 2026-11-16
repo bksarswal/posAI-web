@@ -6,3 +6,6 @@ export * from './staff.payloadBuilder';
 export * from './components/StaffListView';
 export * from './components/StaffCreateForm';
 export * from './components/TempPasswordDialog';
+export * from './components/StaffEditModal';
+export * from './components/StaffDeactivateDialog';
+export * from './components/StaffResetPasswordDialog';

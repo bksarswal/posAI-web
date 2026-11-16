@@ -4,15 +4,23 @@ import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { Table } from 'antd';
 import type { TableProps } from 'antd';
-import { Users, AlertCircle, RefreshCw, Plus } from 'lucide-react';
+import { Users, AlertCircle, RefreshCw, Plus, Pencil, KeyRound, PowerOff } from 'lucide-react';
 import { Button } from '@/shared/ui/button';
 import { Alert, AlertDescription, AlertTitle } from '@/shared/ui/alert';
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/ui/card';
 import { useCurrentUser } from '@/modules/user/user.hooks';
 import type { UserRole } from '@/shared/lib/navigation';
 import { useStaff } from '../staff.hooks';
-import { canManageStaff } from '../staff.permissions';
+import {
+  canManageStaff,
+  canEditStaff,
+  canDeactivateStaff,
+  canResetStaffPassword,
+} from '../staff.permissions';
 import type { StaffItem } from '../staff.types';
+import { StaffEditModal } from './StaffEditModal';
+import { StaffDeactivateDialog } from './StaffDeactivateDialog';
+import { StaffResetPasswordDialog } from './StaffResetPasswordDialog';
 
 // The API's default limit is 20, max is 100.
 // For MVP, we request the max (100) in a single fetch. If the tenant somehow
@@ -25,11 +33,16 @@ export function StaffListView() {
   const { data: meData } = useCurrentUser();
   const [isRetrying, setIsRetrying] = useState(false);
 
+  const [editTarget, setEditTarget] = useState<StaffItem | null>(null);
+  const [deactivateTarget, setDeactivateTarget] = useState<StaffItem | null>(null);
+  const [resetPwTarget, setResetPwTarget] = useState<StaffItem | null>(null);
+
   const items = staffData?.data?.items ?? [];
   const total = staffData?.data?.total ?? 0;
 
-  const role = meData?.data?.user?.role as UserRole | undefined;
-  const canManage = role ? canManageStaff(role) : false;
+  const actorRole = meData?.data?.user?.role as UserRole | undefined;
+  const actorId = meData?.data?.user?.id ?? '';
+  const canManage = actorRole ? canManageStaff(actorRole) : false;
 
   const branchMap = useMemo(() => {
     const map = new Map<string, string>();
@@ -127,6 +140,80 @@ export function StaffListView() {
           <span className="text-xs text-slate-500">No</span>
         ),
     },
+    // Actions column — only rendered if actor can manage staff
+    ...(canManage && actorRole
+      ? [
+          {
+            title: 'Actions',
+            key: 'actions',
+            render: (_: unknown, record: StaffItem) => {
+              const ctx = {
+                actorRole,
+                actorId,
+                targetRole: record.role,
+                targetId: record.id,
+                targetStatus: record.status,
+              };
+              const showEdit = canEditStaff(ctx);
+              const showDeactivate = canDeactivateStaff(ctx);
+              const showResetPw = canResetStaffPassword(ctx);
+
+              if (!showEdit && !showDeactivate && !showResetPw) {
+                return null;
+              }
+
+              return (
+                <div className="flex items-center gap-1">
+                  {showEdit && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-7 px-2 text-xs"
+                      onClick={() => setEditTarget(record)}
+                      aria-label={`Edit ${record.name}`}
+                    >
+                      <Pencil className="h-3.5 w-3.5 mr-1" />
+                      Edit
+                    </Button>
+                  )}
+                  {showDeactivate && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className={`h-7 px-2 text-xs ${
+                        record.status === 'ACTIVE'
+                          ? 'text-red-600 hover:text-red-700'
+                          : 'text-green-700 hover:text-green-800'
+                      }`}
+                      onClick={() => setDeactivateTarget(record)}
+                      aria-label={
+                        record.status === 'ACTIVE'
+                          ? `Deactivate ${record.name}`
+                          : `Activate ${record.name}`
+                      }
+                    >
+                      <PowerOff className="h-3.5 w-3.5 mr-1" />
+                      {record.status === 'ACTIVE' ? 'Deactivate' : 'Activate'}
+                    </Button>
+                  )}
+                  {showResetPw && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-7 px-2 text-xs text-amber-700 hover:text-amber-800"
+                      onClick={() => setResetPwTarget(record)}
+                      aria-label={`Reset password for ${record.name}`}
+                    >
+                      <KeyRound className="h-3.5 w-3.5 mr-1" />
+                      Reset PW
+                    </Button>
+                  )}
+                </div>
+              );
+            },
+          },
+        ]
+      : []),
   ];
 
   return (
@@ -213,6 +300,22 @@ export function StaffListView() {
           )}
         </CardContent>
       </Card>
+
+      <StaffEditModal
+        open={Boolean(editTarget)}
+        staff={editTarget}
+        onClose={() => setEditTarget(null)}
+      />
+      <StaffDeactivateDialog
+        open={Boolean(deactivateTarget)}
+        staff={deactivateTarget}
+        onClose={() => setDeactivateTarget(null)}
+      />
+      <StaffResetPasswordDialog
+        open={Boolean(resetPwTarget)}
+        staff={resetPwTarget}
+        onClose={() => setResetPwTarget(null)}
+      />
     </div>
   );
 }

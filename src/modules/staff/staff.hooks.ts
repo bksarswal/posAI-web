@@ -3,12 +3,15 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { ApiError } from '@/shared/lib/axios';
 import { parseApiError } from '@/shared/lib/apiError';
-import { listStaff, createStaff } from './staff.api';
+import { listStaff, createStaff, updateStaff, resetStaffPassword } from './staff.api';
 import type {
   ListStaffResponse,
   StaffListQuery,
   CreateStaffApiBody,
   CreateStaffResponse,
+  UpdateStaffApiBody,
+  UpdateStaffResponse,
+  ResetStaffPasswordResponse,
 } from './staff.types';
 
 export const STAFF_QUERY_KEYS = {
@@ -40,6 +43,29 @@ export function useCreateStaff() {
 
   return useMutation<CreateStaffResponse, ApiError, CreateStaffApiBody>({
     mutationFn: (data) => createStaff(data),
+    gcTime: 0,
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: STAFF_QUERY_KEYS.all });
+    },
+  });
+}
+
+export function useUpdateStaff(id: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation<UpdateStaffResponse, ApiError, UpdateStaffApiBody>({
+    mutationFn: (payload) => updateStaff(id, payload),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: STAFF_QUERY_KEYS.all });
+    },
+  });
+}
+
+export function useResetStaffPassword(id: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation<ResetStaffPasswordResponse, ApiError, void>({
+    mutationFn: () => resetStaffPassword(id),
     gcTime: 0,
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: STAFF_QUERY_KEYS.all });
